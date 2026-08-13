@@ -1,0 +1,3 @@
+source_id,title,description,url,posted_at,budget_min,budget_max,budget_type,location
+example-1,Connect Stripe checkout to WordPress site,Need payments connected and tested,https://example.invalid/job/1,2026-08-06,400,700,fixed,United States
+

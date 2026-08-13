@@ -1,0 +1,4 @@
+python-dotenv>=1.0,<2
+requests>=2.31,<3
+# Optional at runtime unless COLLECT_GOOGLE_TRENDS=true.
+pytrends>=4.9,<5
