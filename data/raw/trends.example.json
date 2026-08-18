@@ -1,0 +1,90 @@
+{
+  "description": "Illustrative normalized fixture data, not live search volume or current market research.",
+  "trends": [
+    {
+      "topic": "AI receptionist for contractors",
+      "source": "manual_fixture",
+      "mode": "discovery",
+      "category": "business software",
+      "history": [
+        {"timestamp": "2025-08-01T00:00:00+00:00", "value": 8, "evidence_type": "normalized"},
+        {"timestamp": "2025-09-01T00:00:00+00:00", "value": 10, "evidence_type": "normalized"},
+        {"timestamp": "2025-10-01T00:00:00+00:00", "value": 12, "evidence_type": "normalized"},
+        {"timestamp": "2025-11-01T00:00:00+00:00", "value": 15, "evidence_type": "normalized"},
+        {"timestamp": "2025-12-01T00:00:00+00:00", "value": 19, "evidence_type": "normalized"},
+        {"timestamp": "2026-01-01T00:00:00+00:00", "value": 24, "evidence_type": "normalized"},
+        {"timestamp": "2026-02-01T00:00:00+00:00", "value": 31, "evidence_type": "normalized"},
+        {"timestamp": "2026-03-01T00:00:00+00:00", "value": 40, "evidence_type": "normalized"},
+        {"timestamp": "2026-04-01T00:00:00+00:00", "value": 52, "evidence_type": "normalized"},
+        {"timestamp": "2026-05-01T00:00:00+00:00", "value": 65, "evidence_type": "normalized"},
+        {"timestamp": "2026-06-01T00:00:00+00:00", "value": 79, "evidence_type": "normalized"},
+        {"timestamp": "2026-07-01T00:00:00+00:00", "value": 92, "evidence_type": "normalized"},
+        {"timestamp": "2026-08-01T00:00:00+00:00", "value": 100, "evidence_type": "normalized"}
+      ],
+      "related_queries": [
+        {"query": "AI receptionist small business", "value": 72, "rising": true, "evidence_type": "normalized"},
+        {"query": "AI receptionist pricing", "value": 91, "rising": true, "evidence_type": "normalized"},
+        {"query": "AI receptionist for plumbers", "value": 84, "rising": true, "evidence_type": "normalized"},
+        {"query": "AI receptionist for contractors", "value": 100, "rising": true, "evidence_type": "normalized"},
+        {"query": "AI answering software", "value": 69, "rising": true, "evidence_type": "normalized"}
+      ],
+      "geo_interest": [
+        {"location": "Colorado", "value": 67}, {"location": "Texas", "value": 92},
+        {"location": "Florida", "value": 85}, {"location": "California", "value": 73},
+        {"location": "Arizona", "value": 61}, {"location": "Georgia", "value": 58},
+        {"location": "Utah", "value": 70}, {"location": "North Carolina", "value": 64}
+      ],
+      "competition_level": 42,
+      "competition_velocity": 12,
+      "sample_size": 240,
+      "metadata": {"fixture": true, "index_is_absolute_volume": false}
+    },
+    {
+      "topic": "microgreens",
+      "source": "manual_fixture",
+      "mode": "watch",
+      "category": "small business",
+      "history": [
+        {"timestamp": "2025-09-01T00:00:00+00:00", "value": 24},
+        {"timestamp": "2025-10-01T00:00:00+00:00", "value": 26},
+        {"timestamp": "2025-11-01T00:00:00+00:00", "value": 29},
+        {"timestamp": "2025-12-01T00:00:00+00:00", "value": 31},
+        {"timestamp": "2026-01-01T00:00:00+00:00", "value": 35},
+        {"timestamp": "2026-02-01T00:00:00+00:00", "value": 39},
+        {"timestamp": "2026-03-01T00:00:00+00:00", "value": 43},
+        {"timestamp": "2026-04-01T00:00:00+00:00", "value": 48},
+        {"timestamp": "2026-05-01T00:00:00+00:00", "value": 52},
+        {"timestamp": "2026-06-01T00:00:00+00:00", "value": 57},
+        {"timestamp": "2026-07-01T00:00:00+00:00", "value": 61},
+        {"timestamp": "2026-08-01T00:00:00+00:00", "value": 65}
+      ],
+      "related_queries": [
+        {"query": "microgreen business", "value": 62, "rising": true},
+        {"query": "microgreen pricing", "value": 51, "rising": true},
+        {"query": "microgreen wholesale", "value": 44, "rising": true},
+        {"query": "how to grow microgreens", "value": 100, "rising": false}
+      ],
+      "geo_interest": [{"location": "Colorado", "value": 54}, {"location": "Oregon", "value": 49},
+        {"location": "Texas", "value": 46}, {"location": "California", "value": 58}],
+      "competition_level": 35,
+      "competition_velocity": 7,
+      "sample_size": 150
+    },
+    {
+      "topic": "Celebrity scandal event",
+      "source": "manual_fixture",
+      "mode": "discovery",
+      "category": "news",
+      "history": [
+        {"timestamp": "2026-05-01T00:00:00+00:00", "value": 8},
+        {"timestamp": "2026-06-01T00:00:00+00:00", "value": 10},
+        {"timestamp": "2026-07-01T00:00:00+00:00", "value": 100},
+        {"timestamp": "2026-08-01T00:00:00+00:00", "value": 7}
+      ],
+      "related_queries": [{"query": "celebrity scandal news", "value": 100, "rising": true}],
+      "geo_interest": [{"location": "California", "value": 100}],
+      "competition_level": 10,
+      "sample_size": 20
+    }
+  ]
+}

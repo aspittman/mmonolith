@@ -1,6 +1,6 @@
 # Demand Seeker
 
-Demand Seeker is a standalone Python bot that measures the business problems customers are trying to pay to solve. It keeps collection and raw history outside DevSpace CRM, builds local aggregates, and can send only those aggregates to the CRM.
+Demand Seeker is a standalone Python bot that measures the business problems customers are trying to pay to solve. It keeps collection and raw history outside DevSpace CRM, builds local aggregates, and can send only those aggregates to the CRM. Independent, opt-in intelligence modules live under `services/` and do not alter the original demand pipeline.
 
 ## File structure
 
@@ -72,6 +72,9 @@ python3 main.py --collect       # collect into SQLite only
 python3 main.py --analyze       # analyze SQLite and write reports
 python3 main.py --report        # print latest report, generating one if absent
 python3 main.py --sync-crm      # sync latest report only when CRM_SYNC_ENABLED=true
+python3 main.py --google-play   # run the independent Google Play niche service
+python3 main.py --trends       # run watch + discovery attention intelligence
+python3 main.py --trends --trends-cadence daily  # daily/weekly/monthly policy
 ```
 
 Flags may be combined, for example `python3 main.py --collect --analyze --report`.
@@ -138,3 +141,124 @@ FASTEST GROWING TECHNOLOGIES
 
 The real report contains additional fields described above. Scores are comparative decision aids, not fabricated market facts; inspect sample sizes and confidence alongside every score.
 
+## Google Play market intelligence service
+
+`services/google_play` ranks focused app niches using demand, dissatisfaction, competition quality, monetization evidence, market and maintenance gaps, vertical specificity, build complexity, and evidence confidence. It detects `PROVEN_BUT_HATED`, `PROVEN_BUT_ABANDONED`, `SEARCH_DEMAND_WEAK_RESULTS`, and `OVERSIZED_SOFTWARE` patterns. Review analysis extracts recurring complaint themes and their frequency among sampled negative reviews instead of producing only a sentiment score.
+
+```text
+provider -> provider-neutral models -> review/scoring analysis -> quality gates
+         -> JSON report + SQLite historical snapshots
+```
+
+The original collectors, reports, and CRM payload remain unchanged. Google Play reuses the configured SQLite file and output directory but owns tables prefixed with `google_play_`. Snapshots append rather than overwrite.
+
+### Run and configuration
+
+The bundled fixture/import provider supports a credential-free sample run:
+
+```bash
+python3 main.py --google-play
+python3 -m unittest discover -s tests -v
+```
+
+Output is saved at `data/processed/google_play/latest_google_play_report.json`. JSON is used because nested evidence and complaint clusters do not map cleanly to CSV; the existing service's CSV reporting was not duplicated.
+
+Tune the service with the `GOOGLE_PLAY_*` settings documented in `.env.example`: countries, score/confidence gates, evidence thresholds, competition and build-complexity ceilings, maximum results, review sample size, paths, and historical tracking. `GOOGLE_PLAY_ENABLED` is reserved for a future scheduler. The explicit flag runs the service, while ordinary bot runs do not.
+
+### Providers, provenance, and future Play Console data
+
+`GooglePlayProvider` is the adapter contract. `JSONFixtureProvider` reads authorized exports, manual research, or permitted third-party API transformations and needs no key. `PlayConsoleProvider` is the boundary for future first-party installs, conversion, search terms, retention, ratings, country, and revenue data; it intentionally remains unimplemented until an authorized feed is supplied.
+
+To add AppBrain or another provider, subclass `GooglePlayProvider`, return `NicheResearch` records, and inject it into `GooglePlayService(provider=...)`. Network adapters should implement source-specific rate limiting, bounded retries, caching, and timeouts. This project does not evade anti-bot protections.
+
+Competitor evidence is labeled `measured`, `estimated`, or `inferred`. Missing installs, pricing, update dates, and monetization fields remain null. The bundled JSON is illustrative test data, not live market research.
+
+`google_play_score` measures opportunity quality; `confidence_score` measures evidence depth. Demand gates the opportunity calculation, preventing an empty market from ranking well merely because it has no competition. Recommendations also account for confidence, competition, and feasibility rather than one cutoff.
+
+Future Play Console search terms can be normalized into the same provider-neutral records. Terms with unusually strong conversion can create new research seeds—such as a standalone paint estimator—without changing analysis, storage, or reporting.
+
+## Trends: attention velocity and commercial discovery
+
+`services/trends` is MMonolith's broad attention sensor. It does not replace the original demand pipeline or `google_play`. It asks what people are beginning to care about, measures how that attention changes, filters for durable commercial behavior, and persists qualified route jobs for specialist services.
+
+```text
+TrendProvider(s) -> provider-neutral histories / related queries / geography
+                 -> conservative trend families
+                 -> short + medium + long horizon analytics
+                 -> attention signal + commercial signal + confidence
+                 -> append-only snapshots / transitions / route queue
+                 -> google_play, service_intelligence, domain_intelligence
+```
+
+The trading-inspired model is:
+
+```text
+attention -> history -> velocity -> acceleration -> persistence
+          -> lifecycle stage -> commercial trend signal
+```
+
+Provider indexes are normalized with symmetric percentage changes before comparison. In particular, a Google Trends value is relative interest within the requested query/time/geography—not absolute searches. Evidence remains labeled `measured`, `normalized`, `estimated`, or `inferred` in provider records and snapshots.
+
+### Scores and lifecycle
+
+These three scores deliberately answer different questions:
+
+- `attention_score`: momentum of the attention phenomenon. It combines level, normalized velocity, acceleration, persistence, geographic breadth, and volatility. Commercial fit has no material role.
+- `commercial_trend_score`: usefulness to MMonolith. It rewards velocity, acceleration, persistence, commercial/vertical search behavior, geography, and broad market relevance while penalizing volatility, competition, and likely event spikes.
+- `trend_confidence_score`: strength of evidence, not attractiveness. It uses history length, provider count, data completeness, time-horizon/provider agreement, sample size, persistence, and noise. A high commercial score with low confidence remains a watch/investigation signal.
+
+Every signal retains independent `short`, `medium`, and `long` metrics. Defaults are 30, 180, and 1,825 days. The lifecycle classifier emits `DISCOVERY`, `EMERGING`, `ACCELERATING`, `BREAKOUT`, `MAINSTREAM`, `SATURATED`, `DECLINING`, `EVENT_SPIKE`, or `INSUFFICIENT_DATA`. Append-only snapshots make transitions such as `EMERGING → ACCELERATING` first-class report records.
+
+### Watch, discovery, families, and second-order searches
+
+`WATCH_MODE` fetches configured topics and answers what changed in known markets. `DISCOVERY_MODE` accepts provider-supplied trending/rising evidence and answers what MMonolith did not know to watch. Expansion is not a keyword permutation generator: only provider-confirmed rising related queries above `TRENDS_MIN_CHILD_SIGNAL` become children, bounded by depth, children-per-topic, and total discovery limits.
+
+Similar roots and intent branches are grouped into families, so `AI receptionist`, `AI receptionist pricing`, and `AI receptionist for plumbers` can be evaluated together. Related queries are classified as `INFORMATIONAL`, `PROBLEM_AWARE`, `SOLUTION_AWARE`, `COMMERCIAL`, `TRANSACTIONAL`, or `VERTICAL_SPECIFIC`. A rising shift from broad queries toward vertical and transactional terms raises commercial intent.
+
+### Providers and resilience
+
+`TrendProvider` defines `fetch_trending`, `fetch_history`, `fetch_related_queries`, `fetch_geo_interest`, and `normalize`. Included adapters are:
+
+- `ManualJSONProvider`: working credential-free import and deterministic sample provider.
+- `ManualCSVProvider`: explicit future import boundary.
+- `GoogleTrendsProvider`: optional conservative `pytrends` implementation for watched history, related queries, and regional interest.
+
+The default sample run uses JSON and makes no network request. Google does not offer a generally available official Google Trends API for this use here; the community `pytrends` adapter is unofficial, may be throttled, and is intentionally not enabled by default. Inject it with `TrendsService(providers=[GoogleTrendsProvider(...)])` when that tradeoff is acceptable. A production provider should use an authorized API/export and keep provider-specific rate limits, bounded retry/backoff, timeouts, and caching. Provider failures are recorded and isolated so another source can complete the run. Cached provider payloads avoid unnecessary repeated fetches.
+
+The model supports multi-source evidence now: sources and source snapshots are stored separately and signals are labeled `SINGLE_SOURCE_SIGNAL`, `GOOGLE_ONLY_SIGNAL`, or `MULTI_SOURCE_SIGNAL`. Future Reddit, YouTube, GitHub, jobs, marketplace, domain, funding, and first-party adapters can return the same records without changing scoring or storage.
+
+### Historical storage and routing
+
+The service owns append-only tables prefixed with `trend_`: runs, topics, families/members, snapshots, source snapshots, related queries, geography, signals, routes, failures, and provider cache. It reuses the configured SQLite database but does not alter existing tables. Snapshot JSON includes all headline metrics, horizon metrics, evidence provenance, stage, recommendation, and destinations.
+
+Only signals passing the route score and confidence gates create `pending` route records. Event/noise filters and `IGNORE` signals never route. A route payload is structured for downstream consumption:
+
+```json
+{
+  "source_service": "trends",
+  "topic": "AI receptionist for contractors",
+  "stage": "EMERGING",
+  "attention_score": 75.0,
+  "commercial_trend_score": 80.5,
+  "confidence": 70.7
+}
+```
+
+Use `TrendsStorage.pending_routes("google_play")` from a scheduler/dispatcher to claim candidates for deeper analysis. Routes are persisted as intents; the trends run does not automatically spend external API quota or execute another service. This keeps cross-service handoff meaningful, auditable, and idempotent per signal/destination.
+
+### Configuration, scheduling, and outputs
+
+All strategy and fetch settings use the `TRENDS_*` variables in `.env.example`: modes; countries/regions/categories; watched topics; three windows; attention/commercial/confidence/spike gates; discovery and expansion bounds; routing gates; history/cache controls; provider timeout/retries; and fixture/output paths. Thresholds are not scattered through pipeline code.
+
+Run locally with:
+
+```bash
+python3 main.py --trends --trends-cadence daily
+python3 main.py --trends --trends-cadence weekly
+python3 main.py --trends --trends-cadence monthly
+python3 -m unittest discover -s tests -v
+```
+
+Daily runs are intended for discovery and short spikes; weekly runs refresh velocity, acceleration, intent shifts, and expansion; monthly runs provide transition/structural review. An external cron, systemd timer, or MMonolith scheduler should invoke those commands. The service itself avoids introducing a resident scheduler. Cache TTL prevents every cadence from refetching unchanged provider data.
+
+Human-readable output is printed and JSON is written to `data/processed/trends/latest_trends_report.json`. `data/raw/trends.example.json` is illustrative normalized data—not live research—and produces an example route to `google_play`. Geographic breadth is computed from provider regions; new-location adoption can be added by providers as repeated geographic snapshots accumulate. Competition level and optional `competition_velocity` are stored independently, including an `attention velocity - competition velocity` evidence gap.

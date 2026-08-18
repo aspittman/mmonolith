@@ -96,6 +96,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--analyze", action="store_true", help="analyze local history and generate reports")
     parser.add_argument("--report", action="store_true", help="print the latest report (generate if absent)")
     parser.add_argument("--sync-crm", action="store_true", help="send the latest aggregates when CRM sync is enabled")
+    parser.add_argument("--google-play", action="store_true", help="run the independent Google Play niche service")
+    parser.add_argument("--trends", action="store_true", help="run the attention-velocity trends service")
+    parser.add_argument("--trends-cadence", choices=("daily", "weekly", "monthly"), default="weekly",
+                        help="select the trends calculation/fetch cadence")
     return parser.parse_args()
 
 
@@ -104,7 +108,7 @@ def main() -> int:
     configure_logging()
     db = Database(config.DATABASE_PATH)
     db.initialize()
-    selected = any((args.collect, args.analyze, args.report, args.sync_crm))
+    selected = any((args.collect, args.analyze, args.report, args.sync_crm, args.google_play, args.trends))
     report = None
     if not selected:
         collect(db)
@@ -122,6 +126,18 @@ def main() -> int:
     if args.sync_crm:
         report = report or load_report(db)
         sync_crm(report)
+    if args.google_play:
+        from services.google_play import GooglePlayService
+        from services.google_play.reporting import terminal_report
+        run = GooglePlayService().run()
+        print(terminal_report(run.report))
+        logging.getLogger("google_play").info("report written: %s", run.report_path)
+    if args.trends:
+        from services.trends import TrendsService
+        from services.trends.reporting import terminal_report as trends_terminal_report
+        run = TrendsService().run(args.trends_cadence)
+        print(trends_terminal_report(run.report))
+        logging.getLogger("trends").info("report written: %s", run.report_path)
     return 0
 
 
@@ -130,4 +146,3 @@ if __name__ == "__main__":
         raise SystemExit(main())
     except KeyboardInterrupt:
         sys.exit(130)
-

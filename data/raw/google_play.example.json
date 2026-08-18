@@ -1,0 +1,102 @@
+{
+  "niches": [
+    {
+      "niche": "Pressure washing estimate calculator",
+      "primary_keyword": "pressure washing estimate",
+      "related_keywords": ["pressure washing quote", "power washing calculator"],
+      "search_interest": 62,
+      "commercial_users": true,
+      "vertical_specificity": 0.95,
+      "complexity_signals": [],
+      "source_count": 2,
+      "apps": [
+        {
+          "package_name": "example.generic.contractor",
+          "app_name": "Generic Contractor Suite",
+          "niche": "Pressure washing estimate calculator",
+          "keyword": "pressure washing estimate",
+          "developer": "Example Vendor",
+          "rating": 3.6,
+          "rating_count": 3400,
+          "review_count": 3400,
+          "install_estimate": 100000,
+          "subscription": true,
+          "last_updated": "2026-05-01T00:00:00+00:00",
+          "description": "All-in-one field service management.",
+          "source": "manual_fixture",
+          "evidence_type": "estimated",
+          "search_relevance": 0.35,
+          "reviews": [
+            {"review_id": "p1", "text": "Too expensive and far too complicated. I only need estimates and PDF export.", "rating": 2, "source": "manual_fixture"},
+            {"review_id": "p2", "text": "The subscription is overpriced for a one-man pressure washing business.", "rating": 2, "source": "manual_fixture"},
+            {"review_id": "p3", "text": "PDF export fails and the app is bloated with features I never use.", "rating": 1, "source": "manual_fixture"}
+          ]
+        },
+        {
+          "package_name": "example.invoice.generic",
+          "app_name": "Generic Invoice Maker",
+          "niche": "Pressure washing estimate calculator",
+          "keyword": "pressure washing estimate",
+          "rating": 4.0,
+          "rating_count": 850,
+          "review_count": 850,
+          "install_estimate": 50000,
+          "advertising": true,
+          "last_updated": "2025-11-01T00:00:00+00:00",
+          "source": "manual_fixture",
+          "evidence_type": "estimated",
+          "search_relevance": 0.25,
+          "reviews": [{"review_id": "p4", "text": "Too many ads and no pressure washing material calculator.", "rating": 2, "source": "manual_fixture"}]
+        }
+      ]
+    },
+    {
+      "niche": "Independent contractor mileage tracker",
+      "primary_keyword": "contractor mileage tracker",
+      "related_keywords": ["self employed mileage log", "multiple vehicle mileage tracker"],
+      "search_interest": 76,
+      "commercial_users": true,
+      "vertical_specificity": 0.82,
+      "complexity_signals": ["gps", "cloud_sync"],
+      "source_count": 2,
+      "apps": [
+        {
+          "package_name": "example.mileage.one",
+          "app_name": "Mileage Pro Example",
+          "niche": "Independent contractor mileage tracker",
+          "keyword": "contractor mileage tracker",
+          "rating": 3.7,
+          "rating_count": 12000,
+          "review_count": 12000,
+          "install_estimate": 500000,
+          "subscription": true,
+          "last_updated": "2026-06-10T00:00:00+00:00",
+          "source": "manual_fixture",
+          "evidence_type": "estimated",
+          "search_relevance": 0.75,
+          "reviews": [
+            {"review_id": "m1", "text": "The subscription is too expensive and GPS missed three trips.", "rating": 1, "source": "manual_fixture"},
+            {"review_id": "m2", "text": "CSV export is broken and mileage is wrong.", "rating": 2, "source": "manual_fixture"},
+            {"review_id": "m3", "text": "Too complicated for an independent contractor with two vehicles.", "rating": 2, "source": "manual_fixture"}
+          ]
+        },
+        {
+          "package_name": "example.mileage.two",
+          "app_name": "Trip Log Example",
+          "niche": "Independent contractor mileage tracker",
+          "keyword": "contractor mileage tracker",
+          "rating": 4.5,
+          "rating_count": 42000,
+          "review_count": 42000,
+          "install_estimate": 1000000,
+          "subscription": true,
+          "last_updated": "2026-07-01T00:00:00+00:00",
+          "source": "manual_fixture",
+          "evidence_type": "estimated",
+          "search_relevance": 0.7,
+          "reviews": [{"review_id": "m4", "text": "Good but overpriced subscription for my small business.", "rating": 3, "source": "manual_fixture"}]
+        }
+      ]
+    }
+  ]
+}

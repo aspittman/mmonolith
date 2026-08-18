@@ -1,0 +1,286 @@
+{
+  "service": "trends",
+  "generated_at": "2026-08-18T06:57:35.214914+00:00",
+  "cadence": "weekly",
+  "providers": [
+    "manual_json"
+  ],
+  "signals": [
+    {
+      "topic": "AI receptionist for contractors",
+      "family_name": "AI receptionist for contractors",
+      "member_terms": [
+        "AI answering software",
+        "AI receptionist for contractors",
+        "AI receptionist for plumbers",
+        "AI receptionist pricing",
+        "AI receptionist small business"
+      ],
+      "sources": [
+        "manual_fixture"
+      ],
+      "source_confirmation": "SINGLE_SOURCE_SIGNAL",
+      "metrics_by_horizon": {
+        "short": {
+          "attention_level": 90.3,
+          "velocity": 28.7,
+          "acceleration": -13.9,
+          "persistence": 93.8,
+          "volatility": 16.5,
+          "periods": 5
+        },
+        "medium": {
+          "attention_level": 90.3,
+          "velocity": 28.7,
+          "acceleration": -13.9,
+          "persistence": 94.3,
+          "volatility": 21.5,
+          "periods": 6
+        },
+        "long": {
+          "attention_level": 90.3,
+          "velocity": 28.7,
+          "acceleration": -13.9,
+          "persistence": 92.5,
+          "volatility": 49.9,
+          "periods": 13
+        }
+      },
+      "attention_level": 90.3,
+      "attention_velocity": 28.7,
+      "attention_acceleration": -13.9,
+      "persistence_score": 93.6,
+      "volatility_score": 23.0,
+      "geographic_spread_score": 95.4,
+      "commercial_intent_score": 100.0,
+      "competition_score": 42,
+      "competition_velocity": 12,
+      "event_spike_probability": 11.2,
+      "trend_confidence_score": 70.7,
+      "attention_score": 75.0,
+      "commercial_trend_score": 75.4,
+      "market_relevance_score": 81.0,
+      "stage": "EMERGING",
+      "recommendation": "ROUTE_TO_SERVICES",
+      "related_queries": [
+        {
+          "query": "AI receptionist small business",
+          "value": 72,
+          "rising": true,
+          "intent": "VERTICAL_SPECIFIC"
+        },
+        {
+          "query": "AI receptionist pricing",
+          "value": 91,
+          "rising": true,
+          "intent": "TRANSACTIONAL"
+        },
+        {
+          "query": "AI receptionist for plumbers",
+          "value": 84,
+          "rising": true,
+          "intent": "VERTICAL_SPECIFIC"
+        },
+        {
+          "query": "AI receptionist for contractors",
+          "value": 100,
+          "rising": true,
+          "intent": "VERTICAL_SPECIFIC"
+        },
+        {
+          "query": "AI answering software",
+          "value": 69,
+          "rising": true,
+          "intent": "COMMERCIAL"
+        }
+      ],
+      "second_order_shift": "GENERAL \u2192 VERTICAL \u2192 COMMERCIAL",
+      "routes": [
+        "google_play",
+        "service_intelligence",
+        "domain_intelligence"
+      ],
+      "reason": "Emerging attention: velocity +28.7, acceleration -13.9, persistence 93.6; related-query commercial intent is 100.0.",
+      "evidence": {
+        "data_labels": [
+          "normalized"
+        ],
+        "index_is_absolute_volume": false,
+        "period_count": 13,
+        "competition_gap": 16.7
+      },
+      "confidence": 70.7
+    },
+    {
+      "topic": "microgreens",
+      "family_name": "microgreens",
+      "member_terms": [
+        "how to grow microgreens",
+        "microgreen business",
+        "microgreen pricing",
+        "microgreen wholesale",
+        "microgreens"
+      ],
+      "sources": [
+        "manual_fixture"
+      ],
+      "source_confirmation": "SINGLE_SOURCE_SIGNAL",
+      "metrics_by_horizon": {
+        "short": {
+          "attention_level": 61.0,
+          "velocity": 14.9,
+          "acceleration": -1.7,
+          "persistence": 90.3,
+          "volatility": 7.4,
+          "periods": 5
+        },
+        "medium": {
+          "attention_level": 61.0,
+          "velocity": 14.9,
+          "acceleration": -1.7,
+          "persistence": 91.7,
+          "volatility": 9.6,
+          "periods": 6
+        },
+        "long": {
+          "attention_level": 61.0,
+          "velocity": 14.9,
+          "acceleration": -1.7,
+          "persistence": 96.8,
+          "volatility": 21.3,
+          "periods": 12
+        }
+      },
+      "attention_level": 61.0,
+      "attention_velocity": 14.9,
+      "attention_acceleration": -1.7,
+      "persistence_score": 92.9,
+      "volatility_score": 10.1,
+      "geographic_spread_score": 83.3,
+      "commercial_intent_score": 53.2,
+      "competition_score": 35,
+      "competition_velocity": 7,
+      "event_spike_probability": 13.7,
+      "trend_confidence_score": 72.1,
+      "attention_score": 68.2,
+      "commercial_trend_score": 57.8,
+      "market_relevance_score": 42.3,
+      "stage": "EMERGING",
+      "recommendation": "WATCH",
+      "related_queries": [
+        {
+          "query": "microgreen business",
+          "value": 62,
+          "rising": true,
+          "intent": "COMMERCIAL"
+        },
+        {
+          "query": "microgreen pricing",
+          "value": 51,
+          "rising": true,
+          "intent": "TRANSACTIONAL"
+        },
+        {
+          "query": "microgreen wholesale",
+          "value": 44,
+          "rising": true,
+          "intent": "INFORMATIONAL"
+        },
+        {
+          "query": "how to grow microgreens",
+          "value": 100,
+          "rising": false,
+          "intent": "PROBLEM_AWARE"
+        }
+      ],
+      "second_order_shift": "GENERAL \u2192 COMMERCIAL",
+      "routes": [],
+      "reason": "Emerging attention: velocity +14.9, acceleration -1.7, persistence 92.9; related-query commercial intent is 53.2.",
+      "evidence": {
+        "data_labels": [
+          "normalized"
+        ],
+        "index_is_absolute_volume": false,
+        "period_count": 12,
+        "competition_gap": 7.9
+      },
+      "confidence": 72.1
+    },
+    {
+      "topic": "Celebrity scandal event",
+      "family_name": "Celebrity scandal event",
+      "member_terms": [
+        "Celebrity scandal event",
+        "celebrity scandal news"
+      ],
+      "sources": [
+        "manual_fixture"
+      ],
+      "source_confirmation": "SINGLE_SOURCE_SIGNAL",
+      "metrics_by_horizon": {
+        "short": {
+          "attention_level": 39.0,
+          "velocity": 8.0,
+          "acceleration": -100,
+          "persistence": 61.7,
+          "volatility": 100.0,
+          "periods": 4
+        },
+        "medium": {
+          "attention_level": 39.0,
+          "velocity": 8.0,
+          "acceleration": -100,
+          "persistence": 61.7,
+          "volatility": 100.0,
+          "periods": 4
+        },
+        "long": {
+          "attention_level": 39.0,
+          "velocity": 8.0,
+          "acceleration": -100,
+          "persistence": 61.7,
+          "volatility": 100.0,
+          "periods": 4
+        }
+      },
+      "attention_level": 39.0,
+      "attention_velocity": 8.0,
+      "attention_acceleration": -100.0,
+      "persistence_score": 61.7,
+      "volatility_score": 100.0,
+      "geographic_spread_score": 14.5,
+      "commercial_intent_score": 0.0,
+      "competition_score": 10,
+      "competition_velocity": null,
+      "event_spike_probability": 88.9,
+      "trend_confidence_score": 40.7,
+      "attention_score": 29.5,
+      "commercial_trend_score": 9.4,
+      "market_relevance_score": 20.0,
+      "stage": "EVENT_SPIKE",
+      "recommendation": "IGNORE",
+      "related_queries": [
+        {
+          "query": "celebrity scandal news",
+          "value": 100,
+          "rising": true,
+          "intent": "INFORMATIONAL"
+        }
+      ],
+      "second_order_shift": "INFORMATIONAL",
+      "routes": [],
+      "reason": "Event_Spike attention: velocity +8.0, acceleration -100.0, persistence 61.7; related-query commercial intent is 0.0.",
+      "evidence": {
+        "data_labels": [
+          "normalized"
+        ],
+        "index_is_absolute_volume": false,
+        "period_count": 4,
+        "competition_gap": null
+      },
+      "confidence": 40.7
+    }
+  ],
+  "transitions": [],
+  "provider_failures": []
+}
