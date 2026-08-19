@@ -11,7 +11,7 @@ from .analyzer import analyze_family, qualifies
 from .config import TrendsConfig
 from .families import group_families
 from .models import AttentionPoint, GeoInterest, ProviderTrend, RelatedQuery
-from .providers import ManualJSONProvider, TrendProvider
+from .providers import DataForSEOProvider, ManualJSONProvider, TrendProvider
 from .reporting import build_report, write_report
 from .storage import TrendsStorage
 
@@ -38,7 +38,15 @@ class TrendsService:
                  providers: list[TrendProvider] | None = None,
                  storage: TrendsStorage | None = None):
         self.settings = settings or TrendsConfig.from_env()
-        self.providers = providers or [ManualJSONProvider(self.settings.fixture_path)]
+        if providers is not None:
+            self.providers = providers
+        elif self.settings.dataforseo_login and self.settings.dataforseo_password:
+            self.providers = [DataForSEOProvider(self.settings.dataforseo_login,
+                self.settings.dataforseo_password, self.settings.service_keywords,
+                self.settings.dataforseo_location_code, self.settings.dataforseo_language_code,
+                self.settings.provider_timeout_seconds)]
+        else:
+            self.providers = [ManualJSONProvider(self.settings.fixture_path)]
         self.storage = storage or TrendsStorage(root_config.DATABASE_PATH)
         self.logger = logging.getLogger("trends")
 
@@ -118,13 +126,15 @@ class TrendsService:
                 all_records.extend(self._expand(provider, records))
         signals = [analyze_family(group, cfg) for group in group_families(all_records)]
         signals = sorted((signal for signal in signals if qualifies(signal, cfg)),
-                         key=lambda signal: (signal.commercial_trend_score,
+                         key=lambda signal: (signal.demand_opportunity_score or signal.commercial_trend_score,
                                              signal.trend_confidence_score), reverse=True)
         transitions = []
         if cfg.historical_tracking and run_id is not None:
             geo = {record.topic.lower().strip(): [asdict(item) for item in record.geo_interest]
                    for record in all_records}
             transitions = self.storage.save_signals(run_id, signals, now, geo)
-        report = build_report(signals, [provider.name for provider in self.providers], cadence, transitions, failures)
+        demo_data = all(provider.name == "manual_json" for provider in self.providers)
+        report = build_report(signals, [provider.name for provider in self.providers], cadence, transitions,
+                              failures, demo_data=demo_data)
         path = write_report(report, cfg.output_dir)
         return TrendsRun(report, str(path), run_id)

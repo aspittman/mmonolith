@@ -4,6 +4,8 @@ from __future__ import annotations
 import json
 import logging
 import time
+import base64
+import urllib.request
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -65,7 +67,74 @@ class ManualJSONProvider(TrendProvider):
     def fetch_history(self, topics: list[str], countries: list[str], windows: dict[str, int]) -> list[ProviderTrend]:
         wanted = {topic.lower() for topic in topics}
         return [self._convert(raw) for raw in self._load()
-                if raw["topic"].lower() in wanted or raw.get("mode", "both") == "watch"]
+                if raw["topic"].lower() in wanted]
+
+
+class DataForSEOProvider(TrendProvider):
+    """Pay-as-you-go Google Ads keyword metrics grouped into services people can buy."""
+    name = "dataforseo_google_ads"
+    endpoint = "https://api.dataforseo.com/v3/keywords_data/google_ads/search_volume/live"
+
+    def __init__(self, login: str, password: str, service_keywords: dict[str, list[str]],
+                 location_code: int = 2840, language_code: str = "en", timeout: int = 20):
+        if not login or not password:
+            raise ValueError("DataForSEO login and password are required")
+        self.login, self.password = login, password
+        self.service_keywords = service_keywords
+        self.location_code, self.language_code, self.timeout = location_code, language_code, timeout
+
+    def _request(self, keywords: list[str]) -> list[dict]:
+        payload = json.dumps([{"keywords": keywords, "location_code": self.location_code,
+                               "language_code": self.language_code}]).encode("utf-8")
+        token = base64.b64encode(f"{self.login}:{self.password}".encode()).decode()
+        request = urllib.request.Request(self.endpoint, data=payload, method="POST",
+            headers={"Authorization": f"Basic {token}", "Content-Type": "application/json"})
+        with urllib.request.urlopen(request, timeout=self.timeout) as response:
+            body = json.loads(response.read().decode("utf-8"))
+        if int(body.get("status_code", 0)) >= 40000:
+            raise RuntimeError(body.get("status_message", "DataForSEO request failed"))
+        tasks = body.get("tasks") or []
+        if not tasks or int(tasks[0].get("status_code", 0)) >= 40000:
+            message = tasks[0].get("status_message") if tasks else "missing task response"
+            raise RuntimeError(f"DataForSEO request failed: {message}")
+        return tasks[0].get("result") or []
+
+    def fetch_history(self, topics: list[str], countries: list[str], windows: dict[str, int]) -> list[ProviderTrend]:
+        selected = {name: keywords for name, keywords in self.service_keywords.items()
+                    if not topics or name.lower() in {topic.lower() for topic in topics}}
+        keywords = list(dict.fromkeys(keyword for values in selected.values() for keyword in values))
+        rows = self._request(keywords) if keywords else []
+        by_keyword = {str(row.get("keyword", "")).lower(): row for row in rows}
+        output = []
+        for service, terms in selected.items():
+            matched = [by_keyword[term.lower()] for term in terms if term.lower() in by_keyword]
+            months = sorted({(int(item["year"]), int(item["month"]))
+                             for row in matched for item in (row.get("monthly_searches") or [])})
+            history = []
+            for year, month in months:
+                total = sum(float(item.get("search_volume") or 0) for row in matched
+                            for item in (row.get("monthly_searches") or [])
+                            if int(item["year"]) == year and int(item["month"]) == month)
+                history.append(AttentionPoint(f"{year:04d}-{month:02d}-01T00:00:00+00:00", total, "estimated"))
+            volume = sum(float(row.get("search_volume") or 0) for row in matched)
+            weighted_cpc = (sum(float(row.get("cpc") or 0) * float(row.get("search_volume") or 0)
+                                for row in matched) / volume) if volume else 0.0
+            weighted_competition = (sum(float(row.get("competition_index") or 0) *
+                                        float(row.get("search_volume") or 0) for row in matched) / volume) if volume else 0.0
+            related = [RelatedQuery(str(row.get("keyword")), float(row.get("search_volume") or 0),
+                                    False, "estimated") for row in matched]
+            output.append(ProviderTrend(service, self.name, history, related_queries=related,
+                category="online services", competition_level=weighted_competition,
+                sample_size=len(matched), metadata={"search_volume": volume,
+                    "average_cpc": round(weighted_cpc, 2), "paid_competition_index": round(weighted_competition, 1),
+                    "index_is_absolute_volume": True, "live_data": True,
+                    "keywords_requested": len(terms), "keywords_returned": len(matched)}))
+        return output
+
+    def fetch_trending(self, countries: list[str], categories: list[str], limit: int) -> list[ProviderTrend]:
+        # Discovery is deliberately bounded to configured sellable services. Keyword
+        # expansion can be added through the separate keyword-ideas endpoint later.
+        return []
 
 
 class ManualCSVProvider(TrendProvider):

@@ -177,15 +177,15 @@ Competitor evidence is labeled `measured`, `estimated`, or `inferred`. Missing i
 
 Future Play Console search terms can be normalized into the same provider-neutral records. Terms with unusually strong conversion can create new research seeds—such as a standalone paint estimator—without changing analysis, storage, or reporting.
 
-## Trends: attention velocity and commercial discovery
+## Trends: online-service demand and buyer intent
 
-`services/trends` is MMonolith's broad attention sensor. It does not replace the original demand pipeline or `google_play`. It asks what people are beginning to care about, measures how that attention changes, filters for durable commercial behavior, and persists qualified route jobs for specialist services.
+`services/trends` is MMonolith's online-service demand radar. It compares services people can buy—websites, integrations, automation, AI systems, mobile apps, SEO, and booking/lead systems. Attention momentum is supporting evidence; absolute commercial-search demand and buyer intent take priority when a live keyword provider supplies them. Local/Google Maps prospecting is intentionally outside this version because these offers can be sold online.
 
 ```text
-TrendProvider(s) -> provider-neutral histories / related queries / geography
-                 -> conservative trend families
+TrendProvider(s) -> keyword-family volume / CPC / paid competition / history
+                 -> sellable online-service families
                  -> short + medium + long horizon analytics
-                 -> attention signal + commercial signal + confidence
+                 -> buyer intent + demand opportunity + confidence
                  -> append-only snapshots / transitions / route queue
                  -> google_play, service_intelligence, domain_intelligence
 ```
@@ -201,11 +201,13 @@ Provider indexes are normalized with symmetric percentage changes before compari
 
 ### Scores and lifecycle
 
-These three scores deliberately answer different questions:
+These scores deliberately answer different questions:
 
 - `attention_score`: momentum of the attention phenomenon. It combines level, normalized velocity, acceleration, persistence, geographic breadth, and volatility. Commercial fit has no material role.
 - `commercial_trend_score`: usefulness to MMonolith. It rewards velocity, acceleration, persistence, commercial/vertical search behavior, geography, and broad market relevance while penalizing volatility, competition, and likely event spikes.
 - `trend_confidence_score`: strength of evidence, not attractiveness. It uses history length, provider count, data completeness, time-horizon/provider agreement, sample size, persistence, and noise. A high commercial score with low confidence remains a watch/investigation signal.
+- `buyer_intent_score`: transactional wording plus CPC and advertiser competition when absolute keyword evidence is available.
+- `demand_opportunity_score`: the headline comparison score, combining keyword-family volume, buyer intent, momentum, and confidence. A search is evidence of demand, not proof of a purchase.
 
 Every signal retains independent `short`, `medium`, and `long` metrics. Defaults are 30, 180, and 1,825 days. The lifecycle classifier emits `DISCOVERY`, `EMERGING`, `ACCELERATING`, `BREAKOUT`, `MAINSTREAM`, `SATURATED`, `DECLINING`, `EVENT_SPIKE`, or `INSUFFICIENT_DATA`. Append-only snapshots make transitions such as `EMERGING → ACCELERATING` first-class report records.
 
@@ -222,8 +224,11 @@ Similar roots and intent branches are grouped into families, so `AI receptionist
 - `ManualJSONProvider`: working credential-free import and deterministic sample provider.
 - `ManualCSVProvider`: explicit future import boundary.
 - `GoogleTrendsProvider`: optional conservative `pytrends` implementation for watched history, related queries, and regional interest.
+- `DataForSEOProvider`: pay-as-you-go Google Ads keyword volume, monthly history, CPC, and paid-competition evidence aggregated into online-service families.
 
-The default sample run uses JSON and makes no network request. Google does not offer a generally available official Google Trends API for this use here; the community `pytrends` adapter is unofficial, may be throttled, and is intentionally not enabled by default. Inject it with `TrendsService(providers=[GoogleTrendsProvider(...)])` when that tradeoff is acceptable. A production provider should use an authorized API/export and keep provider-specific rate limits, bounded retry/backoff, timeouts, and caching. Provider failures are recorded and isolated so another source can complete the run. Cached provider payloads avoid unnecessary repeated fetches.
+When `DATAFORSEO_LOGIN` and `DATAFORSEO_PASSWORD` are configured, `TrendsService` automatically uses the live DataForSEO provider. Otherwise it makes no network request and uses the JSON fixture, while prominently marking terminal and JSON output as `DEMO` and “not current market research.” Provider failures are recorded and isolated, and results are cached because keyword history changes much less often than the command may run.
+
+The default catalog contains 12 manageable service families and four commercial seed phrases per family. Edit `DEFAULT_SERVICE_KEYWORDS` in `services/trends/config.py` when the offers change. `TRENDS_WATCH_TOPICS` selects family names; it is not a free-form list of DataForSEO keywords.
 
 The model supports multi-source evidence now: sources and source snapshots are stored separately and signals are labeled `SINGLE_SOURCE_SIGNAL`, `GOOGLE_ONLY_SIGNAL`, or `MULTI_SOURCE_SIGNAL`. Future Reddit, YouTube, GitHub, jobs, marketplace, domain, funding, and first-party adapters can return the same records without changing scoring or storage.
 
@@ -261,4 +266,13 @@ python3 -m unittest discover -s tests -v
 
 Daily runs are intended for discovery and short spikes; weekly runs refresh velocity, acceleration, intent shifts, and expansion; monthly runs provide transition/structural review. An external cron, systemd timer, or MMonolith scheduler should invoke those commands. The service itself avoids introducing a resident scheduler. Cache TTL prevents every cadence from refetching unchanged provider data.
 
-Human-readable output is printed and JSON is written to `data/processed/trends/latest_trends_report.json`. `data/raw/trends.example.json` is illustrative normalized data—not live research—and produces an example route to `google_play`. Geographic breadth is computed from provider regions; new-location adoption can be added by providers as repeated geographic snapshots accumulate. Competition level and optional `competition_velocity` are stored independently, including an `attention velocity - competition velocity` evidence gap.
+Human-readable output is printed and JSON is written to `data/processed/trends/latest_trends_report.json`. Live DataForSEO signals add `search_volume`, `average_cpc`, `paid_competition_index`, `buyer_intent_score`, and `demand_opportunity_score`. Configure credentials in `.env`:
+
+```dotenv
+DATAFORSEO_LOGIN=your_login
+DATAFORSEO_PASSWORD=your_password
+DATAFORSEO_LOCATION_CODE=2840
+DATAFORSEO_LANGUAGE_CODE=en
+```
+
+Without those credentials, `data/raw/trends.example.json` remains strictly illustrative normalized data and every report is labeled accordingly.

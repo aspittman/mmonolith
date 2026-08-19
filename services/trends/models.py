@@ -115,6 +115,11 @@ class TrendSignal:
     routes: list[str]
     reason: str
     evidence: dict[str, Any] = field(default_factory=dict)
+    search_volume: float | None = None
+    average_cpc: float | None = None
+    paid_competition_index: float | None = None
+    buyer_intent_score: float | None = None
+    demand_opportunity_score: float | None = None
 
     def as_dict(self) -> dict[str, Any]:
         data = asdict(self)

@@ -9,10 +9,13 @@ from .models import TrendSignal
 
 
 def build_report(signals: list[TrendSignal], providers: list[str], cadence: str,
-                 transitions: list[dict] | None = None, failures: list[dict] | None = None) -> dict:
+                 transitions: list[dict] | None = None, failures: list[dict] | None = None,
+                 demo_data: bool = False) -> dict:
     return {"service": "trends", "generated_at": datetime.now(timezone.utc).isoformat(),
             "cadence": cadence, "providers": providers, "signals": [s.as_dict() for s in signals],
-            "transitions": transitions or [], "provider_failures": failures or []}
+            "data_mode": "DEMO" if demo_data else "LIVE_OR_IMPORTED", "demo_data": demo_data,
+            "warning": "Illustrative fixture data; configure DataForSEO credentials for live demand research."
+            if demo_data else None, "transitions": transitions or [], "provider_failures": failures or []}
 
 
 def write_report(report: dict, output_dir: Path) -> Path:
@@ -32,6 +35,8 @@ def _band(value: float) -> str:
 
 def terminal_report(report: dict) -> str:
     lines = ["=" * 60, "MMONOLITH TREND INTELLIGENCE", "=" * 60, ""]
+    if report.get("demo_data"):
+        lines.extend(["DEMO DATA — NOT CURRENT MARKET RESEARCH", report.get("warning", ""), ""])
     if not report["signals"]:
         lines.append("No signals met the configured attention, commercial, and confidence gates.")
     for index, signal in enumerate(report["signals"], 1):
@@ -45,11 +50,17 @@ def terminal_report(report: dict) -> str:
             f"Acceleration: {_band(max(0, signal['attention_acceleration']))}",
             f"Persistence: {_band(signal['persistence_score'])}",
             f"Commercial Intent: {_band(signal['commercial_intent_score'])}",
+            f"Buyer Intent: {_band(signal.get('buyer_intent_score') or signal['commercial_intent_score'])}",
+            f"Demand Opportunity: {_band(signal.get('demand_opportunity_score') or signal['commercial_trend_score'])}",
             f"Geographic Spread: {_band(signal['geographic_spread_score'])}",
             f"Competition: {_band(signal['competition_score'])}",
             f"Event Spike Probability: {_band(signal['event_spike_probability'])}",
             f"Second-Order Search Shift: {signal['second_order_shift']}",
         ])
+        if signal.get("search_volume") is not None:
+            lines.append(f"Monthly Searches (keyword family): {signal['search_volume']:,.0f}")
+        if signal.get("average_cpc") is not None:
+            lines.append(f"Average CPC: ${signal['average_cpc']:.2f}")
         queries = [query["query"] for query in signal["related_queries"][:5]]
         if queries:
             lines.append("Related searches: " + ", ".join(queries))

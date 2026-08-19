@@ -1,6 +1,6 @@
 {
   "service": "trends",
-  "generated_at": "2026-08-18T06:57:35.214914+00:00",
+  "generated_at": "2026-08-19T08:53:24.391067+00:00",
   "cadence": "weekly",
   "providers": [
     "manual_json"
@@ -51,14 +51,14 @@
       "attention_acceleration": -13.9,
       "persistence_score": 93.6,
       "volatility_score": 23.0,
-      "geographic_spread_score": 95.4,
+      "geographic_spread_score": 81.4,
       "commercial_intent_score": 100.0,
       "competition_score": 42,
       "competition_velocity": 12,
       "event_spike_probability": 11.2,
-      "trend_confidence_score": 70.7,
-      "attention_score": 75.0,
-      "commercial_trend_score": 75.4,
+      "trend_confidence_score": 65.6,
+      "attention_score": 72.9,
+      "commercial_trend_score": 74.0,
       "market_relevance_score": 81.0,
       "stage": "EMERGING",
       "recommendation": "ROUTE_TO_SERVICES",
@@ -100,111 +100,23 @@
         "service_intelligence",
         "domain_intelligence"
       ],
-      "reason": "Emerging attention: velocity +28.7, acceleration -13.9, persistence 93.6; related-query commercial intent is 100.0.",
+      "reason": "Emerging demand: velocity +28.7, acceleration -13.9, persistence 93.6; buyer intent is 100.0. Absolute search volume is unavailable.",
       "evidence": {
         "data_labels": [
           "normalized"
         ],
         "index_is_absolute_volume": false,
         "period_count": 13,
-        "competition_gap": 16.7
+        "competition_gap": 16.7,
+        "live_data": false,
+        "absolute_demand_available": false
       },
-      "confidence": 70.7
-    },
-    {
-      "topic": "microgreens",
-      "family_name": "microgreens",
-      "member_terms": [
-        "how to grow microgreens",
-        "microgreen business",
-        "microgreen pricing",
-        "microgreen wholesale",
-        "microgreens"
-      ],
-      "sources": [
-        "manual_fixture"
-      ],
-      "source_confirmation": "SINGLE_SOURCE_SIGNAL",
-      "metrics_by_horizon": {
-        "short": {
-          "attention_level": 61.0,
-          "velocity": 14.9,
-          "acceleration": -1.7,
-          "persistence": 90.3,
-          "volatility": 7.4,
-          "periods": 5
-        },
-        "medium": {
-          "attention_level": 61.0,
-          "velocity": 14.9,
-          "acceleration": -1.7,
-          "persistence": 91.7,
-          "volatility": 9.6,
-          "periods": 6
-        },
-        "long": {
-          "attention_level": 61.0,
-          "velocity": 14.9,
-          "acceleration": -1.7,
-          "persistence": 96.8,
-          "volatility": 21.3,
-          "periods": 12
-        }
-      },
-      "attention_level": 61.0,
-      "attention_velocity": 14.9,
-      "attention_acceleration": -1.7,
-      "persistence_score": 92.9,
-      "volatility_score": 10.1,
-      "geographic_spread_score": 83.3,
-      "commercial_intent_score": 53.2,
-      "competition_score": 35,
-      "competition_velocity": 7,
-      "event_spike_probability": 13.7,
-      "trend_confidence_score": 72.1,
-      "attention_score": 68.2,
-      "commercial_trend_score": 57.8,
-      "market_relevance_score": 42.3,
-      "stage": "EMERGING",
-      "recommendation": "WATCH",
-      "related_queries": [
-        {
-          "query": "microgreen business",
-          "value": 62,
-          "rising": true,
-          "intent": "COMMERCIAL"
-        },
-        {
-          "query": "microgreen pricing",
-          "value": 51,
-          "rising": true,
-          "intent": "TRANSACTIONAL"
-        },
-        {
-          "query": "microgreen wholesale",
-          "value": 44,
-          "rising": true,
-          "intent": "INFORMATIONAL"
-        },
-        {
-          "query": "how to grow microgreens",
-          "value": 100,
-          "rising": false,
-          "intent": "PROBLEM_AWARE"
-        }
-      ],
-      "second_order_shift": "GENERAL \u2192 COMMERCIAL",
-      "routes": [],
-      "reason": "Emerging attention: velocity +14.9, acceleration -1.7, persistence 92.9; related-query commercial intent is 53.2.",
-      "evidence": {
-        "data_labels": [
-          "normalized"
-        ],
-        "index_is_absolute_volume": false,
-        "period_count": 12,
-        "competition_gap": 7.9
-      },
-      "confidence": 72.1
+      "search_volume": null,
+      "average_cpc": null,
+      "paid_competition_index": null,
+      "buyer_intent_score": 100.0,
+      "demand_opportunity_score": 92.2,
+      "confidence": 65.6
     },
     {
       "topic": "Celebrity scandal event",
@@ -269,18 +181,28 @@
       ],
       "second_order_shift": "INFORMATIONAL",
       "routes": [],
-      "reason": "Event_Spike attention: velocity +8.0, acceleration -100.0, persistence 61.7; related-query commercial intent is 0.0.",
+      "reason": "Event_Spike demand: velocity +8.0, acceleration -100.0, persistence 61.7; buyer intent is 0.0. Absolute search volume is unavailable.",
       "evidence": {
         "data_labels": [
           "normalized"
         ],
         "index_is_absolute_volume": false,
         "period_count": 4,
-        "competition_gap": null
+        "competition_gap": null,
+        "live_data": false,
+        "absolute_demand_available": false
       },
+      "search_volume": null,
+      "average_cpc": null,
+      "paid_competition_index": null,
+      "buyer_intent_score": 0.0,
+      "demand_opportunity_score": 2.8,
       "confidence": 40.7
     }
   ],
+  "data_mode": "DEMO",
+  "demo_data": true,
+  "warning": "Illustrative fixture data; configure DataForSEO credentials for live demand research.",
   "transitions": [],
   "provider_failures": []
 }

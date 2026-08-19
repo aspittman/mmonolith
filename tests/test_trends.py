@@ -14,7 +14,7 @@ from services.trends.families import group_families, normalized_topic
 from services.trends.models import (AttentionPoint, ProviderTrend, Recommendation,
                                     SearchIntent)
 from services.trends.pipeline import TrendsService
-from services.trends.providers import ManualJSONProvider, TrendProvider
+from services.trends.providers import DataForSEOProvider, ManualJSONProvider, TrendProvider
 from services.trends.storage import TrendsStorage
 
 
@@ -32,7 +32,44 @@ class BrokenProvider(TrendProvider):
         raise TimeoutError("provider timeout")
 
 
+class FakeDataForSEOProvider(DataForSEOProvider):
+    def _request(self, keywords):
+        return [
+            {"keyword": "hire API developer", "search_volume": 500, "cpc": 8.0,
+             "competition_index": 70, "monthly_searches": [
+                 {"year": 2026, "month": 6, "search_volume": 400},
+                 {"year": 2026, "month": 7, "search_volume": 450},
+                 {"year": 2026, "month": 8, "search_volume": 500}]},
+            {"keyword": "API integration services", "search_volume": 1000, "cpc": 12.0,
+             "competition_index": 80, "monthly_searches": [
+                 {"year": 2026, "month": 6, "search_volume": 700},
+                 {"year": 2026, "month": 7, "search_volume": 850},
+                 {"year": 2026, "month": 8, "search_volume": 1000}]},
+        ]
+
+
 class TrendsTests(unittest.TestCase):
+    def test_dataforseo_groups_keywords_into_buyer_demand_service(self):
+        provider = FakeDataForSEOProvider("login", "password", {
+            "API integrations": ["hire API developer", "API integration services"]})
+        record = provider.fetch_history(["API integrations"], ["US"], {})[0]
+        self.assertEqual(record.topic, "API integrations")
+        self.assertEqual(record.metadata["search_volume"], 1500)
+        self.assertGreater(record.metadata["average_cpc"], 10)
+        self.assertEqual([point.value for point in record.history], [1100, 1300, 1500])
+
+    def test_live_keyword_evidence_populates_demand_scores(self):
+        with tempfile.TemporaryDirectory() as directory:
+            provider = FakeDataForSEOProvider("login", "password", {
+                "API integrations": ["hire API developer", "API integration services"]})
+            cfg = TrendsConfig(watch_topics=["API integrations"], output_dir=Path(directory),
+                historical_tracking=False, minimum_attention_score=0,
+                minimum_commercial_trend_score=0, minimum_confidence=0)
+            signal = TrendsService(cfg, [provider]).run().report["signals"][0]
+            self.assertEqual(signal["search_volume"], 1500)
+            self.assertGreater(signal["buyer_intent_score"], 70)
+            self.assertTrue(signal["evidence"]["index_is_absolute_volume"])
+
     def test_velocity_distinguishes_growth_decline_and_stagnation(self):
         self.assertGreater(attention_velocity(points([10, 12, 14, 16, 18])), 0)
         self.assertLess(attention_velocity(points([90, 75, 60, 45, 30])), 0)
@@ -99,6 +136,8 @@ class TrendsTests(unittest.TestCase):
                 minimum_commercial_trend_score=0, minimum_confidence=0,
                 route_score_threshold=55, route_confidence_threshold=40, cache_ttl_hours=0)
             run = TrendsService(cfg, [ManualJSONProvider(cfg.fixture_path)], storage).run("weekly")
+            self.assertTrue(run.report["demo_data"])
+            self.assertNotIn("microgreens", {signal["topic"] for signal in run.report["signals"]})
             ai = next(signal for signal in run.report["signals"] if signal["topic"].startswith("AI receptionist"))
             celebrity = next(signal for signal in run.report["signals"] if signal["topic"].startswith("Celebrity"))
             self.assertEqual(ai["recommendation"], Recommendation.ROUTE_TO_SERVICES.value)

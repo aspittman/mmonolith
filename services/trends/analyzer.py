@@ -1,6 +1,7 @@
 """Convert provider observations into explainable commercial trend signals."""
 from __future__ import annotations
 
+import math
 from statistics import mean
 
 from .analytics import (clamp, commercial_intent_score, confidence_score, event_spike_probability,
@@ -53,6 +54,23 @@ def _routes(topic: str, score: float, confidence: float, cfg: TrendsConfig) -> l
     return routes
 
 
+def _demand_metrics(primary: ProviderTrend, commercial: float, momentum: float,
+                    confidence: float) -> tuple[float | None, float | None, float | None, float, float]:
+    """Keep absolute keyword demand separate from normalized attention indexes."""
+    metadata = primary.metadata
+    volume = metadata.get("search_volume")
+    cpc = metadata.get("average_cpc")
+    paid_competition = metadata.get("paid_competition_index")
+    if volume is None:
+        return None, None, None, commercial, round(.70 * commercial + .30 * momentum, 1)
+    volume_score = clamp(22 * math.log10(max(float(volume), 1)))
+    cpc_score = clamp(20 * float(cpc or 0))
+    advertiser_signal = clamp(float(paid_competition or 0))
+    buyer_intent = clamp(.50 * commercial + .30 * cpc_score + .20 * advertiser_signal)
+    opportunity = clamp(.32 * volume_score + .34 * buyer_intent + .20 * momentum + .14 * confidence)
+    return float(volume), float(cpc or 0), float(paid_competition or 0), round(buyer_intent, 1), round(opportunity, 1)
+
+
 def analyze_family(records: list[ProviderTrend], cfg: TrendsConfig) -> TrendSignal:
     primary = max(records, key=lambda record: len(record.history))
     horizons = {
@@ -68,7 +86,13 @@ def analyze_family(records: list[ProviderTrend], cfg: TrendsConfig) -> TrendSign
                 seen.add(query.query.lower())
                 related_raw.append((query.query, query.value, query.rising))
     commercial, classified = commercial_intent_score(primary.topic, related_raw)
-    geo = geographic_spread([geo.value for record in records for geo in record.geo_interest])
+    geo_values = [geo.value for record in records for geo in record.geo_interest]
+    geo = geographic_spread(geo_values)
+    # A country-targeted keyword request has known scope but cannot claim regional
+    # breadth. Treat it as neutral so an online service is not penalized for the
+    # deliberate absence of Google Maps/local-market data.
+    if not geo_values and primary.metadata.get("index_is_absolute_volume"):
+        geo = 50.0
     medium = horizons["medium"]
     spike = event_spike_probability(points_within(primary.history, cfg.short_window),
                                     commercial, medium.persistence)
@@ -96,22 +120,27 @@ def analyze_family(records: list[ProviderTrend], cfg: TrendsConfig) -> TrendSign
                                   volatility, primary.sample_size)
     stage = trend_stage(level, velocity, acceleration, persistence, volatility, spike, competition,
                         len(primary.history))
-    routes = _routes(primary.topic, commercial_score, confidence, cfg)
+    volume, average_cpc, paid_competition, buyer_intent, demand_opportunity = _demand_metrics(
+        primary, commercial, commercial_score, confidence)
+    routing_score = demand_opportunity if volume is not None else commercial_score
+    routes = _routes(primary.topic, routing_score, confidence, cfg)
     unsafe = any(term in primary.topic.lower() for term in UNSAFE)
     obvious_noise = any(term in primary.topic.lower() for term in NOISE)
     if unsafe or spike > cfg.maximum_event_spike_probability or (obvious_noise and commercial < 45):
         recommendation = Recommendation.IGNORE.value
         routes = []
-    elif commercial_score >= 85 and confidence >= 75 and routes:
+    elif routing_score >= 85 and confidence >= 75 and routes:
         recommendation = Recommendation.HIGH_PRIORITY.value
     elif routes:
         recommendation = Recommendation.ROUTE_TO_SERVICES.value
-    elif commercial_score >= 58 and confidence >= 40:
+    elif routing_score >= 58 and confidence >= 40:
         recommendation = Recommendation.INVESTIGATE.value
     else:
         recommendation = Recommendation.WATCH.value
-    reason = (f"{stage.title()} attention: velocity {velocity:+.1f}, acceleration {acceleration:+.1f}, "
-              f"persistence {persistence:.1f}; related-query commercial intent is {commercial:.1f}.")
+    reason = (f"{stage.title()} demand: velocity {velocity:+.1f}, acceleration {acceleration:+.1f}, "
+              f"persistence {persistence:.1f}; buyer intent is {buyer_intent:.1f}." +
+              (f" Keyword-family volume is {volume:.0f}/month with ${average_cpc:.2f} average CPC."
+               if volume is not None else " Absolute search volume is unavailable."))
     return TrendSignal(
         topic=primary.topic, family_name=family_name(records),
         member_terms=sorted({r.topic for r in records} | {q[0] for q in related_raw}),
@@ -127,9 +156,14 @@ def analyze_family(records: list[ProviderTrend], cfg: TrendsConfig) -> TrendSign
         recommendation=recommendation, related_queries=classified,
         second_order_shift=_second_order(classified), routes=routes, reason=reason,
         evidence={"data_labels": sorted({p.evidence_type for r in records for p in r.history}),
-                  "index_is_absolute_volume": False, "period_count": len(primary.history),
+                  "index_is_absolute_volume": bool(primary.metadata.get("index_is_absolute_volume")),
+                  "period_count": len(primary.history),
                   "competition_gap": round(velocity - competition_velocity, 1)
-                  if competition_velocity is not None else None},
+                  if competition_velocity is not None else None,
+                  "live_data": bool(primary.metadata.get("live_data")),
+                  "absolute_demand_available": volume is not None},
+        search_volume=volume, average_cpc=average_cpc, paid_competition_index=paid_competition,
+        buyer_intent_score=buyer_intent, demand_opportunity_score=demand_opportunity,
     )
 
 

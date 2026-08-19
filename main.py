@@ -97,7 +97,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--report", action="store_true", help="print the latest report (generate if absent)")
     parser.add_argument("--sync-crm", action="store_true", help="send the latest aggregates when CRM sync is enabled")
     parser.add_argument("--google-play", action="store_true", help="run the independent Google Play niche service")
-    parser.add_argument("--trends", action="store_true", help="run the attention-velocity trends service")
+    parser.add_argument("--trends", action="store_true", help="run online-service demand and buyer-intent research")
     parser.add_argument("--trends-cadence", choices=("daily", "weekly", "monthly"), default="weekly",
                         help="select the trends calculation/fetch cadence")
     return parser.parse_args()

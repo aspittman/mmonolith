@@ -157,6 +157,10 @@ class TrendsStorage:
                                      "topic": signal.topic, "family_name": signal.family_name,
                                      "stage": signal.stage, "attention_score": signal.attention_score,
                                      "commercial_trend_score": signal.commercial_trend_score,
+                                     "buyer_intent_score": signal.buyer_intent_score,
+                                     "demand_opportunity_score": signal.demand_opportunity_score,
+                                     "search_volume": signal.search_volume,
+                                     "average_cpc": signal.average_cpc,
                                      "confidence": signal.trend_confidence_score,
                                      "related_queries": [q["query"] for q in signal.related_queries[:10]]}
                     db.execute("INSERT OR IGNORE INTO trend_routes (signal_id, destination, created_at, payload_json) VALUES (?, ?, ?, ?)",
