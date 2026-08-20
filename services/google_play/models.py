@@ -52,6 +52,12 @@ class NicheResearch:
     vertical_specificity: float = 0.5
     complexity_signals: list[str] = field(default_factory=list)
     source_count: int = 1
+    country: str = "US"
+    collected_at: str | None = None
+    monthly_search_volume: int | None = None
+    average_cpc: float | None = None
+    acquisition_difficulty: float | None = None
+    policy_risks: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -76,6 +82,11 @@ class Opportunity:
     recommended_mvp: list[str]
     positioning: str
     primary_risk: str
+    validation_experiment: str = "Interview five target users and test a paid landing-page offer."
+    excluded_features: list[str] = field(default_factory=list)
+    monetization_hypothesis: str = "Paid download or simple subscription; validate before building."
+    policy_risks: list[str] = field(default_factory=list)
+    source_freshness: str = "unknown"
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)

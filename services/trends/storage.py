@@ -198,6 +198,12 @@ class TrendsStorage:
         return [{"route_id": row[0], "destination": row[1], "status": row[2],
                  "payload": json.loads(row[3])} for row in rows]
 
+    def mark_route(self, route_id: int, status: str) -> None:
+        if status not in {"processing", "complete", "failed", "pending"}:
+            raise ValueError("invalid route status")
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE trend_routes SET status=? WHERE id=?", (status, route_id))
+
     def history(self, topic: str) -> list[dict]:
         with sqlite3.connect(self.path) as db:
             rows = db.execute("""SELECT s.captured_at, s.trend_stage, s.snapshot_json

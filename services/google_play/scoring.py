@@ -18,7 +18,10 @@ def demand_score(niche: NicheResearch) -> float:
     install_signal = min(1, math.log10(installs + 1) / 6)
     review_signal = min(1, math.log10(reviews + 1) / 5)
     breadth = min(1, adopted / 3)
-    search = .5 if niche.search_interest is None else min(1, niche.search_interest / 100)
+    if niche.monthly_search_volume is not None:
+        search = min(1, math.log10(niche.monthly_search_volume + 1) / 5)
+    else:
+        search = .5 if niche.search_interest is None else min(1, niche.search_interest / 100)
     return round(100 * (.40 * install_signal + .25 * review_signal + .20 * breadth + .15 * search), 1)
 
 

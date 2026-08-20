@@ -161,13 +161,39 @@ python3 main.py --google-play
 python3 -m unittest discover -s tests -v
 ```
 
+For unattended execution, enable the desired services and invoke the scheduler entry point
+from cron or a systemd timer:
+
+```bash
+GOOGLE_PLAY_ENABLED=true
+TRENDS_ENABLED=true
+python3 main.py --scheduled
+```
+
+The scheduler entry point runs only services enabled by their environment flags. A typical
+weekly cron entry should execute from the repository directory and capture stdout/stderr in
+the deployment's normal logging system.
+
 Output is saved at `data/processed/google_play/latest_google_play_report.json`. JSON is used because nested evidence and complaint clusters do not map cleanly to CSV; the existing service's CSV reporting was not duplicated.
 
 Tune the service with the `GOOGLE_PLAY_*` settings documented in `.env.example`: countries, score/confidence gates, evidence thresholds, competition and build-complexity ceilings, maximum results, review sample size, paths, and historical tracking. `GOOGLE_PLAY_ENABLED` is reserved for a future scheduler. The explicit flag runs the service, while ordinary bot runs do not.
 
 ### Providers, provenance, and future Play Console data
 
-`GooglePlayProvider` is the adapter contract. `JSONFixtureProvider` reads authorized exports, manual research, or permitted third-party API transformations and needs no key. `PlayConsoleProvider` is the boundary for future first-party installs, conversion, search terms, retention, ratings, country, and revenue data; it intentionally remains unimplemented until an authorized feed is supplied.
+`GooglePlayProvider` is the adapter contract. `JSONFixtureProvider` reads authorized exports,
+manual research, or permitted third-party API transformations and needs no key.
+`AuthorizedHTTPProvider` connects a licensed vendor or internal collection service without
+embedding source-specific scraping in this repository. Configure `GOOGLE_PLAY_PROVIDER=http`,
+`GOOGLE_PLAY_PROVIDER_URL`, and optionally `GOOGLE_PLAY_PROVIDER_API_KEY`. It sends:
+
+```json
+{"countries":["US"],"review_limit":200,"seeds":["roofer estimate calculator"]}
+```
+
+The endpoint returns the same top-level `{"niches": [...]}` schema demonstrated in
+`data/raw/google_play.example.json`. Every metric must retain its source and evidence type.
+`PlayConsoleProvider` remains a boundary for first-party performance data about apps you own;
+it is not treated as a competitor-discovery API.
 
 To add AppBrain or another provider, subclass `GooglePlayProvider`, return `NicheResearch` records, and inject it into `GooglePlayService(provider=...)`. Network adapters should implement source-specific rate limiting, bounded retries, caching, and timeouts. This project does not evade anti-bot protections.
 
@@ -176,6 +202,20 @@ Competitor evidence is labeled `measured`, `estimated`, or `inferred`. Missing i
 `google_play_score` measures opportunity quality; `confidence_score` measures evidence depth. Demand gates the opportunity calculation, preventing an empty market from ranking well merely because it has no competition. Recommendations also account for confidence, competition, and feasibility rather than one cutoff.
 
 Future Play Console search terms can be normalized into the same provider-neutral records. Terms with unusually strong conversion can create new research seeds—such as a standalone paint estimator—without changing analysis, storage, or reporting.
+
+### Automated discovery and audit trail
+
+Qualified trends routes are now claimed by the Google Play run, expanded into focused
+`calculator`, `estimator`, `tracker`, `log`, and `manager` searches, and marked complete only
+after successful analysis. Provider calls use bounded retries, timeouts, response validation,
+and a SQLite cache. Failures are persisted and failed routes remain explicitly marked.
+
+All researched niches—including rejected ones—are stored in
+`google_play_research_snapshots` with gate reasons. Accepted opportunity snapshots remain in
+`google_play_snapshots`. Reports identify demo data, seeds, research counts, evidence
+freshness, policy/acquisition risks, concrete MVP features, excluded scope, monetization
+hypotheses, and a validation experiment. This makes the report a build-decision brief rather
+than an automatic instruction to build an app.
 
 ## Trends: online-service demand and buyer intent
 

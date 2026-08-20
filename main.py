@@ -97,6 +97,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--report", action="store_true", help="print the latest report (generate if absent)")
     parser.add_argument("--sync-crm", action="store_true", help="send the latest aggregates when CRM sync is enabled")
     parser.add_argument("--google-play", action="store_true", help="run the independent Google Play niche service")
+    parser.add_argument("--scheduled", action="store_true",
+                        help="run services enabled by environment flags (for cron/systemd)")
     parser.add_argument("--trends", action="store_true", help="run online-service demand and buyer-intent research")
     parser.add_argument("--trends-cadence", choices=("daily", "weekly", "monthly"), default="weekly",
                         help="select the trends calculation/fetch cadence")
@@ -106,9 +108,15 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     configure_logging()
+    if args.scheduled:
+        from services.google_play.config import GooglePlayConfig
+        from services.trends.config import TrendsConfig
+        args.google_play = GooglePlayConfig.from_env().enabled
+        args.trends = TrendsConfig.from_env().enabled
     db = Database(config.DATABASE_PATH)
     db.initialize()
-    selected = any((args.collect, args.analyze, args.report, args.sync_crm, args.google_play, args.trends))
+    selected = any((args.collect, args.analyze, args.report, args.sync_crm,
+                    args.google_play, args.trends, args.scheduled))
     report = None
     if not selected:
         collect(db)

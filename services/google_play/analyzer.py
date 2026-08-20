@@ -37,18 +37,37 @@ def analyze_niche(n: NicheResearch, cfg: GooglePlayConfig) -> Opportunity:
     elif market_gap >= 55: pattern = "SEARCH_DEMAND_WEAK_RESULTS"
     elif any(c["theme"] in {"complexity", "pricing"} for c in clusters): pattern = "OVERSIZED_SOFTWARE"
     else: pattern = "GENERAL_GAP"
-    top_features = [c["theme"] for c in clusters[:4]] or ["focused core workflow", "simple export"]
+    feature_map = {"export problems": "reliable PDF/CSV export", "pricing": "transparent simple pricing",
+                   "complexity": "guided single-purpose workflow", "crashes": "offline-safe autosave",
+                   "data loss": "backup and restore", "gps reliability": "manual trip correction",
+                   "synchronization": "reliable cross-device sync", "ads": "ad-free paid tier",
+                   "notifications": "configurable reminders", "support": "in-app support and diagnostics"}
+    top_features = [feature_map.get(c["theme"], c["theme"]) for c in clusters[:4]] or [
+        "focused core workflow", "simple export"]
     competitors = [{"app_name": a.app_name, "package_name": a.package_name, "rating": a.rating,
                     "rating_count": a.rating_count, "install_estimate": a.install_estimate,
                     "last_updated": a.last_updated, "source": a.source,
                     "evidence_type": a.evidence_type} for a in n.apps]
-    risk = "Established polished competitors" if competition >= 60 else "Demand evidence may not convert into paid adoption"
+    risks = list(n.policy_risks)
+    if competition >= 60: risks.append("Established polished competitors")
+    if (n.acquisition_difficulty or 0) >= 70: risks.append("Expensive user acquisition")
+    if not risks: risks.append("Demand evidence may not convert into paid adoption")
+    freshness = "unknown"
+    dates = [a.last_updated for a in n.apps if a.last_updated]
+    if dates: freshness = max(dates)
+    experiment = (f"Offer a clickable {n.niche.lower()} prototype to 10 target users; "
+                  "require a price selection before beta signup.")
     return Opportunity(n.niche, n.primary_keyword, score, confidence, demand, dissatisfaction, competition,
                        monetization, complexity, market_gap, maintenance, vertical, pattern,
                        recommendation(score, confidence, complexity, competition), clusters, competitors,
                        {"competitor_count": len(n.apps), "related_keywords": n.related_keywords,
                         "search_interest": n.search_interest, "data_labels": ["measured", "estimated", "inferred"]},
-                       top_features, f"A simpler {n.niche.lower()} for focused professional workflows.", risk)
+                       top_features, f"A simpler {n.niche.lower()} for focused professional workflows.", risks[0],
+                       validation_experiment=experiment,
+                       excluded_features=["marketplace", "social network", "enterprise administration"],
+                       monetization_hypothesis=("Test a paid download against a low monthly subscription; "
+                                                f"keyword CPC evidence: {n.average_cpc or 'unavailable'}."),
+                       policy_risks=risks, source_freshness=freshness)
 
 
 def normalized_niche_key(value: str) -> str:
