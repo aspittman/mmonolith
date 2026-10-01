@@ -1,0 +1,20 @@
+{
+  "origin": "devspace-one/services/domain_merchant",
+  "sha256_before_import_rename": {
+    "config": "b6af85f9da9daf5c692009f6e5972d655fe5284c9157608bdc2087ece5e0c40c",
+    "niche_config": "f2c268f7c7e0ca16ccb0af50e1b61fafdb55e2a5f65a5d4a6ed274897874d2dc",
+    "domain_features": "2b5d17cd88abc9e5fdc85c26a7c5e3880e622e0ddaf06d888d79ab0b3ee59ae2",
+    "market_data": "5d1fb4c8f4ff576720ab7491677246affa44a57af73526a98b89671a3337e073",
+    "sales_sources": "8c15f5b41bc57a7774b8dd288b27828ff8c61ed7ade1b7bd3feac30fcfa5a561",
+    "sales_importer": "9494d53bb8a18b15334ad1378d7d8afa0509c062703274aa28cacaf14d402ea5",
+    "comparable_sales": "7c8defcdd8713e065d2e7fde47c9e466fb581b9b85b5b9e784dabda67fd98c20",
+    "valuation": "dbd80c01c0f60cfea0b26d38a204898470f14c97cde5db6ccb9dfbf78eef7527",
+    "grammar": "bf1a63d00f31702e28b1b7e5bd5c22fdd23d34495c7a4ca42878fcdadd4ef0fd",
+    "scorer": "121aa9fdfa5e9afb091a38808fe00e1315a603e47c84dea20780756a9f552deb",
+    "market_scoring": "12dd83f8783ccf1c86a6b95cd73fa0975330f8bd3c565a27b38e75d472945bcb",
+    "sources": "897b6cc56a8de1fcc8df615984a23142e1394ace7dbc94d128f10d5030c66b2b",
+    "performance": "532f79b2b977fb1eb3e7a960227dd5a949fd9acc1969b064dc8e3f8c4690793e",
+    "availability": "a69b71a56f0eb555c05bb67cb0c6137a105631d654ac85fd3b1cd96f038e80b5",
+    "snapshot_store": "611bfb6ee585c5b0f693bf5c00ec3d3f032b9a0487cc9f7142863246e5d39bbc"
+  }
+}

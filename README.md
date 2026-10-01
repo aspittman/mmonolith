@@ -316,3 +316,25 @@ DATAFORSEO_LANGUAGE_CODE=en
 ```
 
 Without those credentials, `data/raw/trends.example.json` remains strictly illustrative normalized data and every report is labeled accordingly.
+
+## Closed-loop domain intelligence
+
+`services/domain_intelligence` publishes versioned market research and predictions to CRM,
+compares attributable execution outcomes with expectations, and publishes updated intelligence.
+It does not approve or execute work. See [the shared architecture and safe test guide](docs/closed-loop-intelligence.md)
+for the four-repository contract, setup, CLI commands, source requirements and limitations.
+
+```bash
+python3 -m services.domain_intelligence --help
+python3 -m unittest discover -s tests -v
+```
+
+## Evidence-based domain discovery
+
+Domain candidate research now runs here; DevSpace One consumes the findings.
+The original scorer is retained for optional comparison. See
+[domain research setup, providers and verification](docs/domain-research.md).
+
+```bash
+python3 -m services.domain_intelligence.discover --help
+```

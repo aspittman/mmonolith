@@ -1,0 +1,49 @@
+{
+  "report": {
+    "run_key": "2026-09-20-mortgage",
+    "subject_key": "mortgage",
+    "subject_type": "domain_market",
+    "report_type": "DOMAIN_MARKET",
+    "summary": "mortgage: 0 reported sales and 0 research candidates. Missing data remains unknown; no resale forecast.",
+    "overall_score": null,
+    "confidence_score": 0.0,
+    "previous_report_id": null,
+    "correlation_id": "d40c96a3-d3f6-5a5a-8275-f01e3605bc6e",
+    "is_test": false,
+    "metadata": {
+      "research_contract": "domain-evidence-v1",
+      "research_owner": "mmonolith",
+      "observed_at": "2026-09-20T06:04:36.853581+00:00",
+      "niche": "mortgage",
+      "keywords": [
+        "mortgage rates",
+        "mortgage lender"
+      ],
+      "locations": [],
+      "candidates": [],
+      "reported_sales_count": 0,
+      "retail_keyword_statistics": [],
+      "keyword_demand": null,
+      "confidence_method": "Individual sales n/(n+3) \u00d7 observed coverage across sales, demand, buyers and availability; not sale probability.",
+      "internal_outcomes": [],
+      "feedback_evaluations": [],
+      "provider_failures": [
+        {
+          "provider": "NameBio",
+          "error_type": "RuntimeError"
+        },
+        {
+          "provider": "NameBio",
+          "error_type": "RuntimeError"
+        }
+      ],
+      "limitations": [
+        "Reported sales are selection-biased; sell-through probability needs unsold inventory and exposure time.",
+        "Domain candidates are hypotheses. Legacy scores are optional comparisons, not evidence."
+      ]
+    }
+  },
+  "signals": [],
+  "predictions": [],
+  "feedback_ids": []
+}

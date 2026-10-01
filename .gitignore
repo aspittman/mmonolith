@@ -8,3 +8,7 @@ data/processed/latest_market_report.json
 data/processed/latest_market_report.csv
 data/processed/google_play/
 logs/*.log
+
+# Domain research package build artifacts
+/build/
+/*.egg-info/

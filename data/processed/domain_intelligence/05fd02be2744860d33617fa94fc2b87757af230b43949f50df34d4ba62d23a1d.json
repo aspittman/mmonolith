@@ -1,0 +1,44 @@
+{
+  "report": {
+    "run_key": "2026-09-20-roofing",
+    "subject_key": "roofing",
+    "subject_type": "domain_market",
+    "report_type": "DOMAIN_MARKET",
+    "summary": "roofing: 0 reported sales and 0 research candidates. Missing data remains unknown; no resale forecast.",
+    "overall_score": null,
+    "confidence_score": 0.0,
+    "previous_report_id": null,
+    "correlation_id": "56c4f312-8695-523c-bb69-0ec9b50c8086",
+    "is_test": false,
+    "metadata": {
+      "research_contract": "domain-evidence-v1",
+      "research_owner": "mmonolith",
+      "observed_at": "2026-09-20T06:04:38.427794+00:00",
+      "niche": "roofing",
+      "keywords": [
+        "roofing contractor"
+      ],
+      "locations": [],
+      "candidates": [],
+      "reported_sales_count": 0,
+      "retail_keyword_statistics": [],
+      "keyword_demand": null,
+      "confidence_method": "Individual sales n/(n+3) \u00d7 observed coverage across sales, demand, buyers and availability; not sale probability.",
+      "internal_outcomes": [],
+      "feedback_evaluations": [],
+      "provider_failures": [
+        {
+          "provider": "NameBio",
+          "error_type": "RuntimeError"
+        }
+      ],
+      "limitations": [
+        "Reported sales are selection-biased; sell-through probability needs unsold inventory and exposure time.",
+        "Domain candidates are hypotheses. Legacy scores are optional comparisons, not evidence."
+      ]
+    }
+  },
+  "signals": [],
+  "predictions": [],
+  "feedback_ids": []
+}

@@ -99,6 +99,10 @@ class DataForSEOProvider(TrendProvider):
             raise RuntimeError(f"DataForSEO request failed: {message}")
         return tasks[0].get("result") or []
 
+    def fetch_keyword_data(self, keywords: list[str]) -> list[dict]:
+        """Return original provider rows for other MMonolith research services."""
+        return self._request(keywords)
+
     def fetch_history(self, topics: list[str], countries: list[str], windows: dict[str, int]) -> list[ProviderTrend]:
         selected = {name: keywords for name, keywords in self.service_keywords.items()
                     if not topics or name.lower() in {topic.lower() for topic in topics}}

@@ -1,0 +1,14 @@
+{
+  "engine_id": "mmonolith",
+  "url_env": "CRM_BASE_URL",
+  "secret_env": "BOT_API_SECRET",
+  "fallback_route": "/api/bot/feedback-loop/context",
+  "services": {
+    "domain_merchant": {
+      "inputs": [
+        "execution_results",
+        "intelligence_reports"
+      ]
+    }
+  }
+}

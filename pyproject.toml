@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "devspace-domain-research"
+version = "0.2.0"
+description = "MMonolith-owned domain research and preserved legacy analysis"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["devspace_domain_research"]
+
+[tool.setuptools.package-data]
+devspace_domain_research = ["transfer_manifest.json"]
