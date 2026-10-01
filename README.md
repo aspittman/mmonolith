@@ -1,5 +1,10 @@
 # Demand Seeker
 
+DevSpace client growth research is a separate service under
+`services/devspace_clients`. See [client onboarding and research](docs/client-research.md)
+for the business-profile form, customer/referral/competition tracks, engine folder
+layout, independent commands and deployment prerequisites.
+
 Demand Seeker is a standalone Python bot that measures the business problems customers are trying to pay to solve. It keeps collection and raw history outside DevSpace CRM, builds local aggregates, and can send only those aggregates to the CRM. Independent, opt-in intelligence modules live under `services/` and do not alter the original demand pipeline.
 
 ## File structure

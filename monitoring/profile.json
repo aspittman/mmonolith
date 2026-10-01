@@ -4,6 +4,9 @@
   "secret_env": "BOT_API_SECRET",
   "fallback_route": "/api/bot/feedback-loop/context",
   "services": {
+    "devspace_clients": {
+      "inputs": ["execution_results", "intelligence_reports"]
+    },
     "domain_merchant": {
       "inputs": [
         "execution_results",
