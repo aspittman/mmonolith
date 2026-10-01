@@ -21,9 +21,9 @@ saves to `organization_services.config_json.client_research` with service key
 ownership from the authenticated profile. It cannot enable email, approve an
 execution request, edit another organization, or modify unrelated service config.
 
-Utah is the initial area. Six proposed starter profiles were prepared from the
+Utah is the initial area. Six starter profiles were prepared from the
 existing inventory and the supplied business descriptions in
-`data/devspace_clients/initial_profiles.json`. They remain local, with
+`data/devspace_clients/initial_profiles.json` and registered in Supabase, with
 `needs_client_confirmation=true`; their target categories are initial hypotheses.
 Synapse needs a business description. Domain Merchant, Apollo Outreach and the
 internal DevSpace organization are excluded from this initial client list.
@@ -111,11 +111,19 @@ client reports without changing market confidence or creating sales forecasts.
 
 ## Deployment readiness
 
-Live inspection found the existing organizations and older scout services, but
-the deployed database lacks `service_registry` and the deployed CRM returns 404
-for `/api/bot/client-research`. The `intelligence_reports.service_id` projection
-also failed. Apply the missing CRM migrations in order (019–022, after confirming
-the existing migration history) and deploy the CRM before connected publication.
+Live migrations 019–022 have been applied. Six client profiles are registered,
+and the initial cycle published through the Supabase `loop_publish` contract.
+The scheduled runner uses `ClientResearchSupabase` for profile reads, context,
+and publication through the existing `loop_publish` RPC. Research does not depend
+on Vercel availability. Decision and draft preparation retain their CRM endpoints.
+Dsmonitor checks the research service with bounded, tenant/service-scoped direct
+Supabase reads using the same backend credential. Client monitoring has its own
+six-business scope in `dsmonitor/scripts/client_monitoring_scope.json`; other
+service scopes remain independent. Successful reads never manufacture write
+verification: actual publication receipts retain their record IDs.
+The tested CRM release is commit
+`4b93063` in `/tmp/devspace-crm-client-deploy`; its onboarding endpoint must return
+200 before the form and draft worker are considered live.
 Migration 022 adds onboarding, the separate recommendation type and draft claim,
 and leaves the adapter disabled. After deploying the verified DevSpace One worker,
 register `execution_capabilities.devspace_clients.adapter_ready=true` to allow
@@ -125,3 +133,16 @@ Use the business form or explicitly register reviewed starter profiles, then
 schedule research weekly using a stable cycle key. Run the decision engine with
 `NEW_INTELLIGENCE_REPORT` after publication, and poll the client brief worker for
 approved requests. Deployment and runtime activation are separate from code tests.
+
+The host runner uses the local virtual environment and reads existing backend
+credentials without exposing them:
+
+```bash
+.venv/bin/python scripts/run_client_cycle.py --research
+```
+
+The first cycle successfully published reports for all six registered clients.
+Weekly research is installed for Monday at 06:30 host time, preserving the
+existing cron jobs. The default cycle key is the UTC ISO week, so repeat runs reuse completed payloads.
+Use `--decide` and `--prepare` only after the CRM release is deployed. The runner
+does not approve recommendations or send email.
