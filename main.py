@@ -109,7 +109,7 @@ def main() -> int:
     args = parse_args()
     configure_logging()
     if args.scheduled:
-        from services.google_play.config import GooglePlayConfig
+        from services.devspace_services.google_play.config import GooglePlayConfig
         from services.trends.config import TrendsConfig
         args.google_play = GooglePlayConfig.from_env().enabled
         args.trends = TrendsConfig.from_env().enabled
@@ -135,8 +135,8 @@ def main() -> int:
         report = report or load_report(db)
         sync_crm(report)
     if args.google_play:
-        from services.google_play import GooglePlayService
-        from services.google_play.reporting import terminal_report
+        from services.devspace_services.google_play import GooglePlayService
+        from services.devspace_services.google_play.reporting import terminal_report
         run = GooglePlayService().run()
         print(terminal_report(run.report))
         logging.getLogger("google_play").info("report written: %s", run.report_path)

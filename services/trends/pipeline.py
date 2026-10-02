@@ -116,14 +116,19 @@ class TrendsService:
             mode = "+".join(name for name, enabled in (("WATCH_MODE", cfg.watch_mode_enabled),
                                                         ("DISCOVERY_MODE", cfg.discovery_mode_enabled)) if enabled)
             run_id = self.storage.start_run(cadence, mode or "NONE", len(self.providers), now)
-        all_records, failures = [], []
+        all_records, live_records, failures = [], [], []
         for provider in self.providers:
             records, provider_failures = self._fetch(provider, run_id or 0, now, cadence)
             all_records.extend(records)
+            if provider.name not in ('manual_json','manual_csv'):
+                live_records.extend(records)
             failures.extend(provider_failures)
             # Expansion runs weekly/monthly, never recursively beyond the configured first useful layer.
             if cfg.discovery_mode_enabled and cadence != "daily" and cfg.max_expansion_depth > 0:
-                all_records.extend(self._expand(provider, records))
+                children=self._expand(provider, records)
+                all_records.extend(children)
+                if provider.name not in ('manual_json','manual_csv'):
+                    live_records.extend(children)
         signals = [analyze_family(group, cfg) for group in group_families(all_records)]
         signals = sorted((signal for signal in signals if qualifies(signal, cfg)),
                          key=lambda signal: (signal.demand_opportunity_score or signal.commercial_trend_score,
@@ -136,5 +141,20 @@ class TrendsService:
         demo_data = all(provider.name == "manual_json" for provider in self.providers)
         report = build_report(signals, [provider.name for provider in self.providers], cadence, transitions,
                               failures, demo_data=demo_data)
+        # Preserve attributed source measurements for service-demand ingestion.
+        # Scores and fixture observations are not republished as buying intent.
+        from urllib.parse import quote
+        report['source_observations'] = []
+        for record in live_records:
+            if not record.history:
+                continue
+            latest = max(record.history, key=lambda point: point.timestamp)
+            report['source_observations'].append({
+                'source': record.source, 'record_id': record.topic+':'+latest.timestamp,
+                'url': 'https://trends.google.com/trends/explore?q='+quote(record.topic),
+                'observed_at': latest.timestamp, 'text': record.topic,
+                'kind': 'search_interest', 'is_test': False,
+                'measurement': {'value': latest.value, 'unit': latest.evidence_type},
+            })
         path = write_report(report, cfg.output_dir)
         return TrendsRun(report, str(path), run_id)

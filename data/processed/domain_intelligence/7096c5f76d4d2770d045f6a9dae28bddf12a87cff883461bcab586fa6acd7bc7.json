@@ -1,0 +1,128 @@
+{
+  "report": {
+    "run_key": "2026-10-01-mortgage",
+    "subject_key": "mortgage",
+    "subject_type": "domain_market",
+    "report_type": "DOMAIN_MARKET",
+    "summary": "mortgage: 0 reported sales and 0 research candidates. Missing data remains unknown; no resale forecast.",
+    "overall_score": null,
+    "confidence_score": 0.0,
+    "previous_report_id": "cff4fe98-399c-4ac0-b17f-a7ca0b37f972",
+    "correlation_id": "d40c96a3-d3f6-5a5a-8275-f01e3605bc6e",
+    "is_test": false,
+    "metadata": {
+      "research_contract": "domain-evidence-v1",
+      "research_owner": "mmonolith",
+      "observed_at": "2026-10-01T13:00:59.688747+00:00",
+      "niche": "mortgage",
+      "keywords": [
+        "mortgage rates",
+        "mortgage lender"
+      ],
+      "locations": [],
+      "candidates": [],
+      "reported_sales_count": 0,
+      "retail_keyword_statistics": [
+        {
+          "source": "NameBio",
+          "source_url": "https://namebio.com/",
+          "endpoint": "https://api.namebio.com/retailstats",
+          "retrieved_at": "2026-10-01T13:00:37.739589+00:00",
+          "evidence_type": "reported_aggregate",
+          "currency": "USD",
+          "keyword": "mortgage rates",
+          "placements": {
+            "exact": {
+              "sale_count": 0,
+              "price_sum": 0,
+              "price_avg": 0,
+              "price_max": 0,
+              "price_stddev": 0
+            },
+            "start": {
+              "sale_count": 0,
+              "price_sum": 0,
+              "price_avg": 0,
+              "price_max": 0,
+              "price_stddev": 0
+            },
+            "end": {
+              "sale_count": 0,
+              "price_sum": 0,
+              "price_avg": 0,
+              "price_max": 0,
+              "price_stddev": 0
+            },
+            "middle": {
+              "sale_count": 0,
+              "price_sum": 0,
+              "price_avg": 0,
+              "price_max": 0,
+              "price_stddev": 0
+            }
+          },
+          "limitations": [
+            "Reported retail sales of $100 or more; not all market transactions.",
+            "Aggregates have no individual sale dates, TLD filter or unsold denominator; not a domain appraisal."
+          ]
+        },
+        {
+          "source": "NameBio",
+          "source_url": "https://namebio.com/",
+          "endpoint": "https://api.namebio.com/retailstats",
+          "retrieved_at": "2026-10-01T13:00:53.000224+00:00",
+          "evidence_type": "reported_aggregate",
+          "currency": "USD",
+          "keyword": "mortgage lender",
+          "placements": {
+            "exact": {
+              "sale_count": 0,
+              "price_sum": 0,
+              "price_avg": 0,
+              "price_max": 0,
+              "price_stddev": 0
+            },
+            "start": {
+              "sale_count": 0,
+              "price_sum": 0,
+              "price_avg": 0,
+              "price_max": 0,
+              "price_stddev": 0
+            },
+            "end": {
+              "sale_count": 0,
+              "price_sum": 0,
+              "price_avg": 0,
+              "price_max": 0,
+              "price_stddev": 0
+            },
+            "middle": {
+              "sale_count": 0,
+              "price_sum": 0,
+              "price_avg": 0,
+              "price_max": 0,
+              "price_stddev": 0
+            }
+          },
+          "limitations": [
+            "Reported retail sales of $100 or more; not all market transactions.",
+            "Aggregates have no individual sale dates, TLD filter or unsold denominator; not a domain appraisal."
+          ]
+        }
+      ],
+      "keyword_demand": null,
+      "confidence_method": "Individual sales n/(n+3) \u00d7 observed coverage across sales, demand, buyers and availability; not sale probability.",
+      "follow_up_evidence_gaps": [],
+      "internal_outcomes": [],
+      "feedback_evaluations": [],
+      "provider_failures": [],
+      "limitations": [
+        "Reported sales are selection-biased; sell-through probability needs unsold inventory and exposure time.",
+        "Domain candidates are hypotheses. Legacy scores are optional comparisons, not evidence."
+      ]
+    }
+  },
+  "signals": [],
+  "predictions": [],
+  "feedback_ids": []
+}

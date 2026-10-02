@@ -5,9 +5,18 @@
   "fallback_route": "/api/bot/feedback-loop/context",
   "services": {
     "devspace_clients": {
-      "inputs": ["execution_results", "intelligence_reports"]
+      "inputs": [
+        "execution_results",
+        "intelligence_reports"
+      ]
     },
     "domain_merchant": {
+      "inputs": [
+        "execution_results",
+        "intelligence_reports"
+      ]
+    },
+    "devspace_services": {
       "inputs": [
         "execution_results",
         "intelligence_reports"

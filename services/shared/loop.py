@@ -7,7 +7,7 @@ from services.shared.receipts import record, context_reads
 
 class LoopClient:
     def __init__(self, base_url, secret, service_id='domain_merchant'):
-        if service_id not in ('domain_merchant', 'devspace_clients'):
+        if service_id not in ('domain_merchant', 'devspace_clients', 'devspace_services'):
             raise ValueError('Unsupported intelligence service')
         self.service_id = service_id
         parsed = urlparse(base_url)
@@ -41,6 +41,10 @@ class LoopClient:
 
     def publish(self, org, bundle, *, workflow_context=None):
         report = bundle.get('report', {})
+        if self.service_id == 'devspace_services' and (report.get('report_type') != 'SERVICE_DEMAND' or report.get('metadata', {}).get('service_id') != self.service_id):
+            raise ValueError('Service demand publication scope mismatch')
+        if self.service_id != 'devspace_services' and report.get('report_type') == 'SERVICE_DEMAND':
+            raise ValueError('Service demand requires its own transport identity')
         if self.service_id == 'devspace_clients' and (report.get('report_type') != 'CLIENT_RESEARCH' or report.get('metadata', {}).get('service_id') != self.service_id):
             raise ValueError('Client research publication scope mismatch')
         if self.service_id != 'devspace_clients' and report.get('report_type') == 'CLIENT_RESEARCH':

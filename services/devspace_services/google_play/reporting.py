@@ -10,7 +10,7 @@ from .models import Opportunity
 
 def build_report(candidates: list[Opportunity], provider: str, researched_count: int | None = None,
                  seeds: list[str] | None = None, failures: list[dict] | None = None) -> dict:
-    return {"service": "google_play", "generated_at": datetime.now(timezone.utc).isoformat(),
+    return {"service": "google_play", "opportunity_type": "APP_PRODUCT", "generated_at": datetime.now(timezone.utc).isoformat(),
             "provider": provider, "demo_data": provider == "json_fixture",
             "researched_count": researched_count if researched_count is not None else len(candidates),
             "seed_count": len(seeds or []), "seeds": seeds or [],

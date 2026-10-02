@@ -1,5 +1,9 @@
 # Demand Seeker
 
+DevSpace's demand-focused service runs from `services/devspace_services`, including
+Google Play as a research source. See [service demand research](docs/service-demand.md)
+for source adapters, live reports, weekly scheduling and Decision Engine assessments.
+
 DevSpace client growth research is a separate service under
 `services/devspace_clients`. See [client onboarding and research](docs/client-research.md)
 for the business-profile form, customer/referral/competition tracks, engine folder
@@ -148,7 +152,7 @@ The real report contains additional fields described above. Scores are comparati
 
 ## Google Play market intelligence service
 
-`services/google_play` ranks focused app niches using demand, dissatisfaction, competition quality, monetization evidence, market and maintenance gaps, vertical specificity, build complexity, and evidence confidence. It detects `PROVEN_BUT_HATED`, `PROVEN_BUT_ABANDONED`, `SEARCH_DEMAND_WEAK_RESULTS`, and `OVERSIZED_SOFTWARE` patterns. Review analysis extracts recurring complaint themes and their frequency among sampled negative reviews instead of producing only a sentiment score.
+`services/devspace_services/google_play` ranks focused app niches using demand, dissatisfaction, competition quality, monetization evidence, market and maintenance gaps, vertical specificity, build complexity, and evidence confidence. It detects `PROVEN_BUT_HATED`, `PROVEN_BUT_ABANDONED`, `SEARCH_DEMAND_WEAK_RESULTS`, and `OVERSIZED_SOFTWARE` patterns. Review analysis extracts recurring complaint themes and their frequency among sampled negative reviews instead of producing only a sentiment score.
 
 ```text
 provider -> provider-neutral models -> review/scoring analysis -> quality gates

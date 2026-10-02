@@ -12,8 +12,8 @@ TABLES = ('intelligence_reports', 'market_signals', 'intelligence_report_signals
 
 
 class ClientResearchSupabase(LoopClient):
-    def __init__(self, url, secret):
-        super().__init__(url, secret, 'devspace_clients')
+    def __init__(self, url, secret, service_id='devspace_clients'):
+        super().__init__(url, secret, service_id)
         self.rest = url.rstrip('/') + '/rest/v1/'
         self.headers = {'apikey': secret, 'Authorization': 'Bearer ' + secret}
 
@@ -47,6 +47,6 @@ class ClientResearchSupabase(LoopClient):
 
     def enabled_profiles(self, organization_id=None):
         filters = {'select': 'id,organization_id,service_key,niche,is_enabled,config_json',
-            'service_key': 'eq.devspace_clients', 'is_enabled': 'eq.true'}
+            'service_key': 'eq.' + self.service_id, 'is_enabled': 'eq.true'}
         if organization_id: filters['organization_id'] = 'eq.' + str(UUID(organization_id))
         return self.rows('organization_services', filters)

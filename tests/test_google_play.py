@@ -5,16 +5,16 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from services.google_play.analyzer import analyze_all, analyze_niche, normalized_niche_key
-from services.google_play.config import GooglePlayConfig
-from services.google_play.discovery import expand_seeds, topics_from_routes
-from services.google_play.models import AppRecord, NicheResearch, Opportunity, Review
-from services.google_play.pipeline import GooglePlayService
-from services.google_play.providers import GooglePlayProvider
-from services.google_play.reviews import cluster_reviews
-from services.google_play.scoring import (build_complexity_score, competition_strength_score,
+from services.devspace_services.google_play.analyzer import analyze_all, analyze_niche, normalized_niche_key
+from services.devspace_services.google_play.config import GooglePlayConfig
+from services.devspace_services.google_play.discovery import expand_seeds, topics_from_routes
+from services.devspace_services.google_play.models import AppRecord, NicheResearch, Opportunity, Review
+from services.devspace_services.google_play.pipeline import GooglePlayService
+from services.devspace_services.google_play.providers import GooglePlayProvider
+from services.devspace_services.google_play.reviews import cluster_reviews
+from services.devspace_services.google_play.scoring import (build_complexity_score, competition_strength_score,
                                            confidence_score, demand_score, recommendation)
-from services.google_play.storage import GooglePlayStorage
+from services.devspace_services.google_play.storage import GooglePlayStorage
 
 
 def niche(**overrides) -> NicheResearch:
