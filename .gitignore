@@ -14,3 +14,6 @@ logs/*.log
 # Domain research package build artifacts
 /build/
 /*.egg-info/
+
+data/scholarship_research/
+data/investor_research/

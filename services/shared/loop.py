@@ -7,7 +7,7 @@ from services.shared.receipts import record, context_reads
 
 class LoopClient:
     def __init__(self, base_url, secret, service_id='domain_merchant'):
-        if service_id not in ('domain_merchant', 'devspace_clients', 'devspace_services'):
+        if service_id not in ('domain_merchant', 'devspace_clients', 'devspace_services', 'scholarship_research', 'investor_research'):
             raise ValueError('Unsupported intelligence service')
         self.service_id = service_id
         parsed = urlparse(base_url)
@@ -41,6 +41,12 @@ class LoopClient:
 
     def publish(self, org, bundle, *, workflow_context=None):
         report = bundle.get('report', {})
+        product_types={'scholarship_research':'SCHOLARSHIP_RESEARCH','investor_research':'INVESTOR_RESEARCH'}
+        product_type=product_types.get(self.service_id)
+        if product_type and (report.get('report_type')!=product_type or report.get('metadata',{}).get('service_id')!=self.service_id or report.get('metadata',{}).get('research_contract')!='product-research-v1'):
+            raise ValueError('Product research publication scope mismatch')
+        if report.get('report_type') in product_types.values() and report.get('report_type')!=product_type:
+            raise ValueError('Product research requires its own transport identity')
         if self.service_id == 'devspace_services' and (report.get('report_type') != 'SERVICE_DEMAND' or report.get('metadata', {}).get('service_id') != self.service_id):
             raise ValueError('Service demand publication scope mismatch')
         if self.service_id != 'devspace_services' and report.get('report_type') == 'SERVICE_DEMAND':

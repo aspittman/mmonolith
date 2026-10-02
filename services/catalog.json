@@ -3,12 +3,14 @@
     "category": "domains",
     "folder": "services/domain_merchant",
     "legacy_folder": "services/domain_intelligence",
-    "entrypoint": "services.domain_merchant"
+    "entrypoint": "services.domain_merchant",
+    "workload_group": "business_operations"
   },
   "devspace_clients": {
     "category": "client_growth",
     "folder": "services/devspace_clients",
-    "entrypoint": "services.devspace_clients"
+    "entrypoint": "services.devspace_clients",
+    "workload_group": "business_operations"
   },
   "devspace_services": {
     "category": "service_demand",
@@ -24,7 +26,8 @@
       "stack_overflow",
       "job_boards",
       "public_search"
-    ]
+    ],
+    "workload_group": "business_operations"
   },
   "google_play": {
     "category": "service_demand_sources",
@@ -34,5 +37,31 @@
   "trends": {
     "category": "market_intelligence",
     "folder": "services/trends"
+  },
+  "scholarship_research": {
+    "category": "product_research",
+    "workload_group": "products",
+    "folder": "services/scholarship_research",
+    "entrypoint": "services.scholarship_research",
+    "coverage": "global",
+    "owners": {
+      "mmonolith": "sourced_intelligence",
+      "decision_engine": "profile_matching",
+      "crm": "storage_and_product_boundary"
+    },
+    "execution": "not_configured"
+  },
+  "investor_research": {
+    "category": "product_research",
+    "workload_group": "products",
+    "folder": "services/investor_research",
+    "entrypoint": "services.investor_research",
+    "coverage": "global",
+    "owners": {
+      "mmonolith": "sourced_intelligence",
+      "decision_engine": "profile_matching",
+      "crm": "storage_and_product_boundary"
+    },
+    "execution": "not_configured"
   }
 }

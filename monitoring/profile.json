@@ -21,6 +21,16 @@
         "execution_results",
         "intelligence_reports"
       ]
+    },
+    "scholarship_research": {
+      "inputs": [
+        "intelligence_reports"
+      ]
+    },
+    "investor_research": {
+      "inputs": [
+        "intelligence_reports"
+      ]
     }
   }
 }
